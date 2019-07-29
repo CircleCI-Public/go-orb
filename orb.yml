@@ -50,6 +50,12 @@ commands:
           key: << parameters.key >>-{{ checksum "go.mod"  }}
           paths:
             - "/go/pkg/mod"
+  mod-download:
+    description: "Run go mod download"
+    steps:
+      - run:
+          name: "go mod download"
+          command: "go mod download"
   test:
     description: "Run go test./..."
     steps:
