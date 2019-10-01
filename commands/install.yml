@@ -1,0 +1,12 @@
+description: "Install Go in your build (for amd64 Linux)."
+parameters:
+  version:
+    description: "The Go version."
+    type: string
+    default: "1.12.7"
+steps:
+  - run:
+      name: "Install Go."
+      command: |
+        curl -sSL "https://dl.google.com/go/go<< parameters.version >>.linux-amd64.tar.gz" | sudo tar -xz -C /usr/local/
+        echo "export PATH=$PATH:/usr/local/go/bin" >> $BASH_ENV

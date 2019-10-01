@@ -1,0 +1,11 @@
+description: "Load cached Go modules."
+parameters:
+  key:
+    description: "The cache key to use. The key is immutable."
+    type: string
+    default: "go-mod"
+steps:
+  - restore_cache:
+      keys:
+        - << parameters.key >>-{{ checksum "go.mod"  }}
+  
