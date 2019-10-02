@@ -1,0 +1,5 @@
+description: "Run go test./..."
+steps:
+  - run:
+      name: "go test"
+      command: "go test ./..."
