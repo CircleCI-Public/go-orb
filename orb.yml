@@ -7,11 +7,11 @@ executors:
     description: "The official CircleCI Go Docker image."
     parameters:
       tag:
-        description: "The `circleci/golang` Docker image version tag."
+        description: "The `cimg/go` Docker image version tag."
         type: string
         default: "latest"
     docker:
-      - image: circleci/golang:<< parameters.tag >>
+      - image: cimg/go:<< parameters.tag >>
 
 commands:
   install:
