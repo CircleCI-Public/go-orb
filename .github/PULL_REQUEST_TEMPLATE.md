@@ -1,7 +1,7 @@
 ### Checklist
 
 <!--
-	thank you for contributing to CircleCI Orbs!
+	thank you for contributing to the CircleCI Go Orb!
 	before submitting your a request, please go through the following
 	items and place an x in the [ ] if they have been completed
 -->
