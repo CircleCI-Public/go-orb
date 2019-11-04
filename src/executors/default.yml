@@ -5,6 +5,5 @@ parameters:
   tag:
     description: "The `cimg/go` Docker image version tag."
     type: string
-    default: "latest"
 docker:
   - image: cimg/go:<< parameters.tag >>
