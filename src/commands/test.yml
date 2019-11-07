@@ -1,5 +1,14 @@
 description: "Run go test./..."
+parameters:
+  coverage:
+    type: string
+    default: "-coverprofile=cover.out"
+    description: "Write a coverage profile to the file after all tests have passed."
+  packages:
+    type: string
+    default: "./..."
+    description: "Import tests by path glob."
 steps:
   - run:
       name: "go test"
-      command: "go test ./..."
+      command: "go test << parameters.coverage >> << parameters.packages >>"
