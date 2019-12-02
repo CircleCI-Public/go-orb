@@ -1,0 +1,15 @@
+description: "Run go test ./... with additional (optional) parameters"
+
+usage:
+  version: 2.1
+
+  orbs:
+    slack: circleci/go@x.y.z
+
+  workflows:
+    your-workflow:
+      jobs:
+        - go/test:
+            race: true
+            failfast: true
+            covermode: "atomic" # The preferred setting when enabling race
