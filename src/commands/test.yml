@@ -1,5 +1,56 @@
-description: "Run go test./..."
+description: |
+  Runs "go test ./..." but includes extensive parameterization for finer tuning
+parameters:
+  packages:
+    description: Import tests to run, by path glob.
+    type: string
+    default: "./..."
+  race:
+    description: |
+      run tests with -race option
+      (if enabled, update covermode to be "atomic")
+    type: boolean
+    default: false
+  count:
+    description: run each test and benchmark n times
+    type: string
+    default: "1"
+  failfast:
+    description: do not start new tests after the first test failure
+    type: boolean
+    default: false
+  short:
+    description: tell long-running tests to shorten their run time
+    type: boolean
+    default: false
+  parallel:
+    description: |
+      Allow parallel execution of test functions that call t.Parallel.
+      The value of this flag is the maximum number of tests to run
+      simultaneously
+    type: string
+    default: "1"
+  coverprofile:
+    description: file to save coverage profile
+    type: string
+    default: "cover-source.out"
+  covermode:
+    description: |
+      flag to set the coverage mode
+      (the go default is: "set", unless -race is enabled, in which case the go default is "atomic")
+    type: enum
+    enum: ["set", "count", "atomic"]
+    default: "set"
 steps:
   - run:
+      command: >-
+        go test
+        <<# parameters.race >>-race<</ parameters.race >>
+        -count=<<parameters.count>>
+        -coverprofile=<<parameters.coverprofile>>
+        <<# parameters.failfast >>-failfast<</ parameters.failfast >>
+        <<# parameters.short >>-short<</ parameters.short >>
+        -p <<parameters.parallel>>
+        -covermode=<<parameters.covermode>>
+        <<parameters.packages>>
       name: "go test"
-      command: "go test ./..."
