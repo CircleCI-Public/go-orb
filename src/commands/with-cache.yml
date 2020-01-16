@@ -1,0 +1,44 @@
+description: "Run a set of steps with Go dependencies cached."
+parameters:
+  steps:
+    type: steps
+    description: >
+      Input any custom steps to run with your Go cache
+  dir:
+    type: string
+    default: /go/pkg/mod
+    description: >
+      Filepath to your Go modules
+  cache-key:
+    type: string
+    default: go.sum
+    description: >
+      File to use as a Go cache checksum
+  cache-version:
+    type: string
+    default: v1
+    description: >
+      Cache version; increment this for a fresh cache
+  use-strict-cache:
+    type: boolean
+    default: false
+    description: >
+      If true, ignores non-checksum cache hits
+  include-branch-in-cache-key:
+    type: boolean
+    default: true
+    description: >
+      If true, includes current branch name in cache key
+steps:
+  - restore_cache:
+      keys:
+        - go-mod-<<parameters.cache-version>>-<<#parameters.include-branch-in-cache-key>>{{ .Branch }}-<</parameters.include-branch-in-cache-key>>{{ checksum "<<parameters.cache-key>>" }}
+        - <<^parameters.use-strict-cache>>go-mod-<<parameters.cache-version>><<#parameters.include-branch-in-cache-key>>-{{ .Branch }}<</parameters.include-branch-in-cache-key>><</parameters.use-strict-cache>>
+        - <<^parameters.use-strict-cache>>go-mod-<<parameters.cache-version>><</parameters.use-strict-cache>>
+
+  - steps: <<parameters.steps>>
+
+  - save_cache:
+      key: go-mod-<<parameters.cache-version>>-<<#parameters.include-branch-in-cache-key>>{{ .Branch }}-<</parameters.include-branch-in-cache-key>>{{ checksum "<<parameters.cache-key>>" }}
+      paths:
+        - <<parameters.dir>>
