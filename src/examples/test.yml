@@ -1,4 +1,5 @@
-description: "Running tests for current project."
+description: "Run go test ./... with additional (optional) parameters"
+
 usage:
   version: 2.1
 
@@ -17,4 +18,7 @@ usage:
         - go/load-cache
         - go/mod-download
         - go/save-cache
-        - go/test
+        - go/test:
+            race: true
+            failfast: true
+            covermode: "atomic" # The preferred setting when enabling race
