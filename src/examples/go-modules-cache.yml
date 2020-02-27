@@ -1,5 +1,4 @@
-description: "Run go test ./... with additional (optional) parameters"
-
+description: "Speeding up builds with the Go modules cache on CircleCI."
 usage:
   version: 2.1
 
@@ -18,7 +17,3 @@ usage:
         - go/load-cache
         - go/mod-download
         - go/save-cache
-        - go/test:
-            race: true
-            failfast: true
-            covermode: "atomic" # The preferred setting when enabling race
