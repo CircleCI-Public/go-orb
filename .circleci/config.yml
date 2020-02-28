@@ -1,39 +1,93 @@
-version: 2.1
+version: 2.1  # v2.1 is the minimal config version needed to support orbs
 
 orbs:
   cli: circleci/circleci-cli@0.1.4
+  go: circleci/go@dev:alpha  # dev:alpha is used for integration tests
+  orb-tools: circleci/orb-tools@9.0
+
+parameters:
+  # These pipeline parameters are required by the 
+  # "trigger-integration-tests-workflow" job, by default.
+  run-integration-tests:
+    type: boolean
+    default: false
+  dev-orb-version:
+    type: string
+    default: "dev:alpha"
 
 workflows:
-  main:
+  lint_pack-validate_publish-dev:  # runs on every commit
+    unless: << pipeline.parameters.run-integration-tests >>
     jobs:
-      - test:
-          filters:
-            tags:
-              # Simplified SemVer regex
-              only: /^\d+\.\d+\.\d+$/
-      - publish:
+      - orb-tools/lint
+      - orb-tools/pack
+      - orb-tools/publish-dev:
+          # release dev version of orb, for testing & possible publishing.
+          # orb will be published as dev:alpha and dev:${CIRCLE_SHA1:0:7}.
+          orb-name: circleci/go
+          requires:
+            - orb-tools/pack
+          context: orb-publishing
+      - orb-tools/trigger-integration-tests-workflow:
+          # trigger an integration workflow to test the
+          # dev:${CIRCLE_SHA1:0:7} version of your orb
+          name: trigger-integration-dev
+          requires:
+            - orb-tools/publish-dev
+          context: orb-publishing
+  integration-tests_prod-release:
+    # This `integration-tests_prod-release` workflow will only run
+    # when the run-integration-tests pipeline parameter is set to true.
+    # It is meant to be triggered by the "trigger-integration-tests-workflow"
+    # job, and run tests on <your orb>@dev:${CIRCLE_SHA1:0:7}.
+    when: << pipeline.parameters.run-integration-tests >>
+    jobs:
+      - integration-test-1
+      - integration-test-2
+
+      # publish a semver version of the orb. relies on
+      # the commit subject containing the text "[semver:patch|minor|major|skip]"
+      # as that will determine whether a patch, minor or major
+      # version will be published or if publishing should
+      # be skipped.
+      # e.g. [semver:patch] will cause a patch version to be published.
+      - orb-tools/dev-promote-prod-from-commit-subject:
+          orb-name: circleci/aws-s3
+          context: orb-publishing
+          add-pr-comment: true
+          bot-token-variable: GHI_TOKEN
+          bot-user: cpe-bot
+          fail-if-semver-not-indicated: true
+          publish-version-tag: false
+          requires:
+            - integration-test-1
+            - integration-test-2
           filters:
             branches:
-              ignore: /.*/
-            tags:
-              # Simplified SemVer regex
-              only: /^\d+\.\d+\.\d+$/
-          context: orb-publishing
+              only: master
 
 jobs:
-  test:
-    executor: cli/default
+  integration-test-1:
+    executor:
+      name: go/default
+      tag: "1.13"
     steps:
-      - checkout
       - run:
-          name: "Validate Orb config"
-          command: |
-            circleci config pack src > orb.yml
-            circleci orb validate orb.yml
-  publish:
-    executor: cli/default
+          name: "Check out sample project."
+          command: git clone https://github.com/CircleCI-Public/circleci-demo-go.git
+      - go/load-cache
+      - go/mod-download
+      - go/save-cache
+      - go/test
+  integration-test-2:
+    docker:
+      - image: cimg/base:stable
     steps:
-      - checkout
       - run:
-          name: "Publish orb via the CircleCI CLI"
-          command: circleci orb publish orb.yml circleci/go@${CIRCLE_TAG}
+          name: "Check out sample project."
+          command: git clone https://github.com/CircleCI-Public/circleci-demo-go.git
+      - go/install
+      - go/load-cache
+      - go/mod-download
+      - go/save-cache
+      - go/test
