@@ -6,7 +6,7 @@ orbs:
   orb-tools: circleci/orb-tools@9.0
 
 parameters:
-  # These pipeline parameters are required by the 
+  # These pipeline parameters are required by the
   # "trigger-integration-tests-workflow" job, by default.
   run-integration-tests:
     type: boolean
@@ -74,20 +74,18 @@ jobs:
     steps:
       - run:
           name: "Check out sample project."
-          command: git clone https://github.com/CircleCI-Public/circleci-demo-go.git
+          command: git clone https://github.com/CircleCI-Public/circleci-demo-go.git ~/project
       - go/load-cache
       - go/mod-download
       - go/save-cache
-      - go/test
   integration-test-2:
     docker:
       - image: cimg/base:stable
     steps:
       - run:
           name: "Check out sample project."
-          command: git clone https://github.com/CircleCI-Public/circleci-demo-go.git
+          command: git clone https://github.com/CircleCI-Public/circleci-demo-go.git ~/project
       - go/install
       - go/load-cache
       - go/mod-download
       - go/save-cache
-      - go/test

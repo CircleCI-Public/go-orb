@@ -1,4 +1,4 @@
-description: "Run go mod download"
+description: "Run 'go mod download'."
 steps:
   - run:
       name: "go mod download"

@@ -1,5 +1,5 @@
 description: |
-  Runs "go test ./..." but includes extensive parameterization for finer tuning
+  Runs 'go test ./...' but includes extensive parameterization for finer tuning
 parameters:
   packages:
     description: Import tests to run, by path glob.
