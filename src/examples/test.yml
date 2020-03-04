@@ -21,4 +21,4 @@ usage:
         - go/test:
             race: true
             failfast: true
-            covermode: "atomic" # The preferred setting when enabling race
+            covermode: "atomic"  # The preferred setting when enabling race

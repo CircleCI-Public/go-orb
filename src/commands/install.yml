@@ -3,7 +3,7 @@ parameters:
   version:
     description: "The Go version."
     type: string
-    default: "1.12.7"
+    default: "1.13.7"
 steps:
   - run:
       name: "Install Go."
