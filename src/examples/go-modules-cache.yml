@@ -11,7 +11,7 @@ usage:
         - build
   jobs:
     build:
-      executor: 
+      executor:
         name: go/default
         tag: "1.14"
       steps:
