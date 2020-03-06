@@ -8,4 +8,4 @@ steps:
   - save_cache:
       key: << parameters.key >>-{{ checksum "go.mod"  }}
       paths:
-        - "/go/pkg/mod"
+        - "$GOPATH/pkg/mod"
