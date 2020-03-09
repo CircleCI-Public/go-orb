@@ -7,4 +7,4 @@ parameters:
 steps:
   - restore_cache:
       keys:
-        - << parameters.key >>-{{ checksum "go.mod"  }}
+        - << parameters.key >>-{{ checksum "go.sum"  }}

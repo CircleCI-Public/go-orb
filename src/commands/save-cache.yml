@@ -6,6 +6,6 @@ parameters:
     default: "go-mod"
 steps:
   - save_cache:
-      key: << parameters.key >>-{{ checksum "go.mod"  }}
+      key: << parameters.key >>-{{ checksum "go.sum"  }}
       paths:
         - "$GOPATH/pkg/mod"
