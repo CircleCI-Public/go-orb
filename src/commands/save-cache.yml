@@ -8,4 +8,5 @@ steps:
   - save_cache:
       key: << parameters.key >>-{{ checksum "go.sum"  }}
       paths:
-        - "$GOPATH/pkg/mod"
+        # /home/circleci/go is the GOPATH in the cimg/go Docker image
+        - "/home/circleci/go/pkg/mod"
