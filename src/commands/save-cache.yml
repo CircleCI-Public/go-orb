@@ -4,9 +4,13 @@ parameters:
     description: "The cache key to use. The key is immutable."
     type: string
     default: "go-mod"
+  path:
+    description: "Path to cache."
+    type: string
+    # /home/circleci/go is the GOPATH in the cimg/go Docker image
+    default: "/home/circleci/go/pkg/mod"
 steps:
   - save_cache:
       key: << parameters.key >>-{{ checksum "go.sum"  }}
       paths:
-        # /home/circleci/go is the GOPATH in the cimg/go Docker image
-        - "/home/circleci/go/pkg/mod"
+        - << parameters.path >>
