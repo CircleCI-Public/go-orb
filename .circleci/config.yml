@@ -1,10 +1,5 @@
 version: 2.1  # v2.1 is the minimal config version needed to support orbs
 
-orbs:
-  cli: circleci/circleci-cli@0.1.4
-  go: circleci/go@dev:alpha  # dev:alpha is used for integration tests
-  orb-tools: circleci/orb-tools@9.0
-
 parameters:
   # These pipeline parameters are required by the
   # "trigger-integration-tests-workflow" job, by default.
@@ -13,7 +8,11 @@ parameters:
     default: false
   dev-orb-version:
     type: string
-    default: "dev:alpha"
+    default: "dev:int-testing"
+
+orbs:
+  go: circleci/go@<<pipeline.parameters.dev-orb-version>>
+  orb-tools: circleci/orb-tools@9.1
 
 workflows:
   lint_pack-validate_publish-dev:  # runs on every commit
@@ -42,8 +41,8 @@ workflows:
     # job, and run tests on <your orb>@dev:${CIRCLE_SHA1:0:7}.
     when: << pipeline.parameters.run-integration-tests >>
     jobs:
-      - integration-test-1
-      - integration-test-2
+      - int-test-cimg-go
+      - int-test-cimg-base
       - int-test-macos-executor
 
       # publish a semver version of the orb. relies on
@@ -61,15 +60,15 @@ workflows:
           fail-if-semver-not-indicated: true
           publish-version-tag: true
           requires:
-            - integration-test-1
-            - integration-test-2
+            - int-test-cimg-go
+            - int-test-cimg-base
             - int-test-macos-executor
           filters:
             branches:
               only: master
 
 jobs:
-  integration-test-1:
+  int-test-cimg-go:
     executor:
       name: go/default
       tag: "1.13"
@@ -82,7 +81,7 @@ jobs:
       - go/mod-download
       - go/save-cache:
           key: "integration"
-  integration-test-2:
+  int-test-cimg-base:
     docker:
       - image: cimg/base:stable
     steps:
