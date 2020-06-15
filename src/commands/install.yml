@@ -1,12 +1,25 @@
-description: "Install Go in your build (for amd64 Linux)."
+description: |
+  Install Go in a build. Supports Linux/amd64 and macOS/amd64.
 parameters:
   version:
     description: "The Go version."
     type: string
-    default: "1.13.7"
+    default: "1.14.4"
 steps:
+  - os-detect/init
   - run:
-      name: "Install Go."
+      name: "Install Go"
       command: |
-        curl -sSL "https://dl.google.com/go/go<< parameters.version >>.linux-amd64.tar.gz" | sudo tar -xz -C /usr/local/
+        if [[ $OSD_FAMILY == "linux" ]];then
+          curl -sSL "https://dl.google.com/go/go<< parameters.version >>.linux-amd64.tar.gz" | sudo tar -xz -C /usr/local/
+        elif [[ $OSD_FAMILY == "darwin" ]];then
+          curl -sSL "https://dl.google.com/go/go<< parameters.version >>.darwin-amd64.tar.gz" | sudo tar -xz -C /usr/local/
+        else
+          echo "OS/platform not supported."
+          exit 1
+        fi
+
         echo "export PATH=$PATH:/usr/local/go/bin" >> $BASH_ENV
+  - run:
+      name: "Verify Go Installation"
+      command: echo "Installed " && go version
