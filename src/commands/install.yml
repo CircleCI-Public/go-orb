@@ -5,11 +5,44 @@ parameters:
     description: "The Go version."
     type: string
     default: "1.14.4"
+  cache:
+    description: Whether or not to cache the binary.
+    type: boolean
+    default: true
+  cache-key:
+    description: |
+      String to use in cache key. Typically overriden when needed to bust cache.
+    type: string
+    default: "v1"
 steps:
   - os-detect/init
+  - when:
+      condition:
+        equal: [ <<parameters.cache>>, true ]
+      steps:
+        - run:
+            name: "Prep cache restore"
+            command: |
+              $SUDO mkdir -p /usr/local/go
+              $SUDO chown -R $(whoami): /usr/local/go
+        - restore_cache:
+            keys:
+              - go-binary-<<parameters.cache-key>>-<<parameters.version>>-{{ arch }}
   - run:
       name: "Install Go"
       command: |
+        if which go;then
+          if go version | grep "<< parameters.version >>";then
+            echo "Binary already exists, skipping download."
+            exit 0
+          else
+            echo "Go is already install but is the wrong version."
+            echo "Installing the request version instead."
+          fi
+
+          echo "Installing the requested version of Go."
+        fi
+
         if [[ $OSD_FAMILY == "linux" ]];then
           curl -sSL "https://dl.google.com/go/go<< parameters.version >>.linux-amd64.tar.gz" | sudo tar -xz -C /usr/local/
         elif [[ $OSD_FAMILY == "darwin" ]];then
@@ -20,6 +53,15 @@ steps:
         fi
 
         echo "export PATH=$PATH:/usr/local/go/bin" >> $BASH_ENV
+        $SUDO chown -R $(whoami): /usr/local/go
   - run:
       name: "Verify Go Installation"
       command: echo "Installed " && go version
+  - when:
+      condition:
+        equal: [ <<parameters.cache>>, true ]
+      steps:
+        - save_cache:
+            key: go-binary-<<parameters.cache-key>>-<<parameters.version>>-{{ arch }}
+            paths:
+              - /usr/local/go
