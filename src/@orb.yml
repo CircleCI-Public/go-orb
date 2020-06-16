@@ -6,3 +6,6 @@ description: |
 display:
   source_url: https://github.com/CircleCI-Public/go-orb
   home_url: https://golang.org/
+
+orbs:
+  os-detect: circleci/os-detect@0.2

@@ -11,6 +11,6 @@ parameters:
     default: "/home/circleci/go/pkg/mod"
 steps:
   - save_cache:
-      key: << parameters.key >>-{{ checksum "go.sum"  }}
+      key: << parameters.key >>-{{ arch }}-{{ checksum "go.sum"  }}
       paths:
         - << parameters.path >>
