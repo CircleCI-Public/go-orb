@@ -13,7 +13,7 @@ usage:
     build:
       executor:
         name: go/default
-        tag: "1.14"
+        tag: "1.15"
       steps:
         - checkout
         - go/load-cache
