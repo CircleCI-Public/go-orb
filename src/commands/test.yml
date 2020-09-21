@@ -44,6 +44,7 @@ parameters:
   verbose:
     description: log all tests as they are run. Also print all text from Log and Logf calls even if the test succeeds.
     type: boolean
+    # Switch this to true in a major release
     default: false
 steps:
   - run:
