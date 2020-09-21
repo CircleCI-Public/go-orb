@@ -41,6 +41,10 @@ parameters:
     type: enum
     enum: ["set", "count", "atomic"]
     default: "set"
+  verbose:
+    description: log all tests as they are run. Also print all text from Log and Logf calls even if the test succeeds.
+    type: boolean
+    default: false
 steps:
   - run:
       command: >-
@@ -52,5 +56,6 @@ steps:
         <<# parameters.short >>-short<</ parameters.short >>
         -p <<parameters.parallel>>
         -covermode=<<parameters.covermode>>
+        <<# parameters.verbose >>-v<</ parameters.verbose >>
         <<parameters.packages>>
       name: "go test"
