@@ -31,8 +31,8 @@ steps:
   - run:
       name: "Install Go"
       command: |
-        if which go;then
-          if go version | grep "<< parameters.version >>";then
+        if command -v go &>/dev/null;then
+          if go version | grep -q -F "go<< parameters.version >> ";then
             echo "Binary already exists, skipping download."
             exit 0
           else
