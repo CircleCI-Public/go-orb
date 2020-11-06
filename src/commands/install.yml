@@ -23,8 +23,7 @@ steps:
         - run:
             name: "Prep cache restore"
             command: |
-              $SUDO mkdir -p /usr/local/go
-              $SUDO chown -R $(whoami): /usr/local/go
+              $SUDO install -o $(whoami) -d /usr/local/go
         - restore_cache:
             keys:
               - go-binary-<<parameters.cache-key>>-<<parameters.version>>-{{ arch }}
@@ -32,9 +31,18 @@ steps:
       name: "Install Go"
       command: |
         : ${OSD_FAMILY:="linux"}
-        : ${HOSTTYPE:="amd64"}
-        if [ "${HOSTTYPE}" = "x86_64" ]; then HOSTTYPE="amd64"; fi
-        case "${HOSTTYPE}" in *86 ) HOSTTYPE=i386 ;; esac
+        if command -v uname >/dev/null; then
+          : ${HOSTTYPE:="$(uname -m)"}
+        else
+          : ${HOSTTYPE:="amd64"}
+        fi
+        case "${HOSTTYPE}" in
+          aarch64)    HOSTTYPE="arm64" ;;
+          arm|armv*l) HOSTTYPE="armv6l" ;;
+          x86_64) HOSTTYPE="amd64" ;;
+          *86)    HOSTTYPE="386" ;;
+        esac
+        : ${USER:="$(whoami)"}
 
         if command -v go >/dev/null; then
           if go version | grep -q -F "go<< parameters.version >> "; then
@@ -43,20 +51,25 @@ steps:
           fi
 
           echo "Found a different version of Go."
-          OSD_FAMILY="$(go env GOHOSTOS)"
-          HOSTTYPE="$(go env GOHOSTARCH)"
-
-          $SUDO rm -rf /usr/local/go
-          $SUDO install --owner=${USER} -d /usr/local/go
+          if go version >/dev/null; then
+            OSD_FAMILY="$(go env GOHOSTOS)"
+            HOSTTYPE="$(go env GOHOSTARCH)"
+          fi
+        fi
+        if [ -d /usr/local/go ]; then
+          $SUDO mv /usr/local/go /usr/local/go~
+          $SUDO rm -rf /usr/local/go~ &
         fi
 
         echo "Installing the requested version of Go."
 
+        $SUDO install -o ${USER} -d /usr/local/go
         curl --fail --location -sS "https://dl.google.com/go/go<< parameters.version >>.${OSD_FAMILY}-${HOSTTYPE}.tar.gz" \
         | sudo tar --no-same-owner --strip-components=1 --gunzip -x -C /usr/local/go/
 
         echo "export PATH=$PATH:/usr/local/go/bin" >> $BASH_ENV
-        $SUDO chown -R $(whoami): /usr/local/go
+        $SUDO chown -R ${USER}: /usr/local/go
+        wait
   - run:
       name: "Verify Go Installation"
       command: echo "Installed " && go version
