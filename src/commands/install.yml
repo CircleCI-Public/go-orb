@@ -67,7 +67,9 @@ steps:
         curl --fail --location -sS "https://dl.google.com/go/go<< parameters.version >>.${OSD_FAMILY}-${HOSTTYPE}.tar.gz" \
         | sudo tar --no-same-owner --strip-components=1 --gunzip -x -C /usr/local/go/
 
-        echo "export PATH=$PATH:/usr/local/go/bin" >> $BASH_ENV
+        if ! grep -q --max-count=1 "PATH=.*/usr/local/go/bin" "${BASH_ENV}"; then
+          echo "export PATH=\"/usr/local/go/bin:${PATH}\"" >>"${BASH_ENV}"
+        fi
         $SUDO chown -R ${USER}: /usr/local/go
         wait
   - run:
