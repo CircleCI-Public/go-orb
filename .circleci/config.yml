@@ -14,6 +14,21 @@ orbs:
   go: circleci/go@<<pipeline.parameters.dev-orb-version>>
   orb-tools: circleci/orb-tools@9.1
 
+executors:
+  cimg-base:
+    docker:
+      - image: cimg/base:2020.09
+  linux-amd64:
+    machine:
+      image: ubuntu-2004:202010-01
+  linux-arm64:
+    machine:
+      image: ubuntu-2004:202011-01
+    resource_class: arm.medium
+  macos:
+    macos:
+      xcode: 12.2.0
+
 workflows:
   lint_pack-validate_publish-dev:  # runs on every commit
     unless: << pipeline.parameters.run-integration-tests >>
@@ -41,9 +56,15 @@ workflows:
     # job, and run tests on <your orb>@dev:${CIRCLE_SHA1:0:7}.
     when: << pipeline.parameters.run-integration-tests >>
     jobs:
-      - int-test-cimg-go
-      - int-test-cimg-base
-      - int-test-macos-executor
+      - integration-test-executor
+      - integration-tests:
+          matrix:
+            parameters:
+              image:
+                - cimg-base
+                - linux-amd64
+                - linux-arm64
+                - macos
 
       # publish a semver version of the orb. relies on
       # the commit subject containing the text "[semver:patch|minor|major|skip]"
@@ -60,18 +81,17 @@ workflows:
           fail-if-semver-not-indicated: true
           publish-version-tag: true
           requires:
-            - int-test-cimg-go
-            - int-test-cimg-base
-            - int-test-macos-executor
+            - integration-test-executor
+            - integration-tests
           filters:
             branches:
               only: master
 
 jobs:
-  int-test-cimg-go:
+  integration-test-executor:
     executor:
       name: go/default
-      tag: "1.13"
+      tag: "1.15.5"
     steps:
       - run:
           name: "Check out sample project."
@@ -80,24 +100,17 @@ jobs:
           key: "integration"
       - go/mod-download
       - go/save-cache:
-          key: "integration"
-  int-test-cimg-base:
-    docker:
-      - image: cimg/base:stable
+  integration-tests:
+    parameters:
+      image:
+        type: executor
+    executor: <<parameters.image>>
     steps:
       - run:
-          name: "Check out sample project."
-          command: git clone https://github.com/CircleCI-Public/circleci-demo-go.git ~/project
-      - go/install
-      - go/load-cache:
-          key: "integration"
-      - go/mod-download
-      - go/save-cache:
-          key: "integration"
-  int-test-macos-executor:
-    macos:
-      xcode: "11.5.0"
-    steps:
+          name: "Get Information"
+          command: |
+            go version
+            uname -a
       - run:
           name: "Check out sample project."
           command: git clone https://github.com/CircleCI-Public/circleci-demo-go.git ~/project
