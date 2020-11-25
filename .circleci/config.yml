@@ -107,6 +107,7 @@ jobs:
         type: executor
     executor: <<parameters.image>>
     steps:
+      - go/install
       - run:
           name: "Get Information"
           command: |
@@ -115,7 +116,6 @@ jobs:
       - run:
           name: "Check out sample project."
           command: git clone https://github.com/CircleCI-Public/circleci-demo-go.git ~/project
-      - go/install
       - go/load-cache:
           key: "integration"
       - go/mod-download
