@@ -44,6 +44,8 @@ workflows:
       - int-test-cimg-go
       - int-test-cimg-base
       - int-test-macos-executor
+      - int-test-vm-linux
+      - int-test-dirty-cache
 
       # publish a semver version of the orb. relies on
       # the commit subject containing the text "[semver:patch|minor|major|skip]"
@@ -63,6 +65,8 @@ workflows:
             - int-test-cimg-go
             - int-test-cimg-base
             - int-test-macos-executor
+            - int-test-vm-linux
+            - int-test-dirty-cache
           filters:
             branches:
               only: master
@@ -110,3 +114,37 @@ jobs:
       - run: go version && go build ./...
       - go/save-cache:
           key: "integration"
+  int-test-vm-linux:
+    machine:
+      image: ubuntu-2004:202104-01
+    steps:
+      - run:
+          name: "Check out sample project."
+          command: git clone https://github.com/CircleCI-Public/circleci-demo-go.git ~/project
+      - go/install:
+          version: 1.16.4
+      - go/load-cache:
+          key: "integration"
+      - go/mod-download
+      - run: go version && go build ./...
+      - go/save-cache:
+          key: "integration"
+  # test to make sure the dirty cache issue doesn't crop back up
+  int-test-dirty-cache:
+    machine:
+      image: ubuntu-2004:202104-01
+    steps:
+      - run:
+          name: "Check out sample project."
+          command: git clone https://github.com/CircleCI-Public/circleci-demo-go.git ~/project
+      - go/install:
+          version: 1.15.1
+      - go/load-cache:
+          key: "integration"
+      - go/mod-download
+      - run: go version && go build ./...
+      - go/save-cache:
+          key: "integration"
+      - go/install:
+          version: 1.16.4
+      - run: go version && go build ./...
