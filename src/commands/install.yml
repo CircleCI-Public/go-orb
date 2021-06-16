@@ -13,7 +13,7 @@ parameters:
     description: |
       String to use in cache key. Typically overriden when needed to bust cache.
     type: string
-    default: "v1"
+    default: "v2"
 steps:
   - os-detect/init
   - when:
@@ -23,6 +23,7 @@ steps:
         - run:
             name: "Prep cache restore"
             command: |
+              $SUDO rm -rf /usr/local/go
               $SUDO mkdir -p /usr/local/go
               $SUDO chown -R $(whoami): /usr/local/go
         - restore_cache:
