@@ -79,6 +79,7 @@ jobs:
       - go/load-cache:
           key: "integration"
       - go/mod-download
+      - run: go version && go build ./...
       - go/save-cache:
           key: "integration"
   int-test-cimg-base:
@@ -92,6 +93,7 @@ jobs:
       - go/load-cache:
           key: "integration"
       - go/mod-download
+      - run: go version && go build ./...
       - go/save-cache:
           key: "integration"
   int-test-macos-executor:
@@ -105,5 +107,6 @@ jobs:
       - go/load-cache:
           key: "integration"
       - go/mod-download
+      - run: go version && go build ./...
       - go/save-cache:
           key: "integration"
