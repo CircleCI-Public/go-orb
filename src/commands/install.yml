@@ -4,7 +4,7 @@ parameters:
   version:
     description: "The Go version."
     type: string
-    default: "1.14.4"
+    default: "1.16.5"
   cache:
     description: Whether or not to cache the binary.
     type: boolean
@@ -13,7 +13,7 @@ parameters:
     description: |
       String to use in cache key. Typically overriden when needed to bust cache.
     type: string
-    default: "v1"
+    default: "v2"
 steps:
   - os-detect/init
   - when:
@@ -23,7 +23,9 @@ steps:
         - run:
             name: "Prep cache restore"
             command: |
+<<<<<<< HEAD
               $SUDO install -o $(whoami) -d /usr/local/go
+
         - restore_cache:
             keys:
               - go-binary-<<parameters.cache-key>>-<<parameters.version>>-{{ arch }}

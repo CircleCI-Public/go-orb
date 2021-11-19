@@ -39,13 +39,19 @@ parameters:
       flag to set the coverage mode
       (the go default is: "set", unless -race is enabled, in which case the go default is "atomic")
     type: enum
-    enum: ["set", "count", "atomic"]
+    enum: [ "set", "count", "atomic" ]
     default: "set"
   verbose:
     description: log all tests as they are run. Also print all text from Log and Logf calls even if the test succeeds.
     type: boolean
     # Switch this to true in a major release
     default: false
+  coverpkg:
+    description: |
+      Apply coverage analysis in each test to packages matching the patterns.
+      (Sets -cover.)
+    type: string
+    default: "./..."
 steps:
   - run:
       command: >-
@@ -59,4 +65,5 @@ steps:
         -covermode=<<parameters.covermode>>
         <<# parameters.verbose >>-v<</ parameters.verbose >>
         <<parameters.packages>>
+        -coverpkg=<<parameters.coverpkg>>
       name: "go test"
