@@ -8,7 +8,7 @@ parameters:
     default: false
   dev-orb-version:
     type: string
-    default: "dev:int-testing"
+    default: "dev:alpha"
 
 orbs:
   go: circleci/go@<<pipeline.parameters.dev-orb-version>>
