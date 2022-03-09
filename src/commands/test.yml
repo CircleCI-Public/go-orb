@@ -64,6 +64,7 @@ parameters:
   cover:
     description: |
       Enable cover without specifying cover packages. Will use the same as the tested packages.
+    type: boolean
 steps:
   - run:
       command: >-
