@@ -11,7 +11,7 @@ parameters:
     default: "dev:alpha"
 
 orbs:
-  go: circleci/go@<<pipeline.parameters.dev-orb-version>>
+  go: ecosia/go@<<pipeline.parameters.dev-orb-version>>
   orb-tools: circleci/orb-tools@9.1
 
 workflows:
@@ -23,7 +23,7 @@ workflows:
       - orb-tools/publish-dev:
           # release dev version of orb, for testing & possible publishing.
           # orb will be published as dev:alpha and dev:${CIRCLE_SHA1:0:7}.
-          orb-name: circleci/go
+          orb-name: ecosia/go
           requires:
             - orb-tools/pack
           context: orb-publishing
@@ -54,7 +54,7 @@ workflows:
       # be skipped.
       # e.g. [semver:patch] will cause a patch version to be published.
       - orb-tools/dev-promote-prod-from-commit-subject:
-          orb-name: circleci/go
+          orb-name: ecosia/go
           context: orb-publishing
           add-pr-comment: true
           bot-token-variable: GHI_TOKEN
