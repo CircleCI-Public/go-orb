@@ -4,7 +4,7 @@ description: |
   Common CircleCI tasks for the Go ( Golang ) programming language.
 
 display:
-  source_url: https://github.com/CircleCI-Public/go-orb
+  source_url: https://github.com/ecosia/go-orb
   home_url: https://golang.org/
 
 orbs:
