@@ -2,7 +2,7 @@ description: |
   Runs 'go test ./...' but includes extensive parameterization for finer tuning
 parameters:
   packages:
-    description: Import tests to run, by path glob.
+    description: Import tests to run, by go list path glob.
     type: string
     default: "./..."
   race:
@@ -39,7 +39,7 @@ parameters:
       flag to set the coverage mode
       (the go default is: "set", unless -race is enabled, in which case the go default is "atomic")
     type: enum
-    enum: [ "set", "count", "atomic" ]
+    enum: ["set", "count", "atomic"]
     default: "set"
   verbose:
     description: log all tests as they are run. Also print all text from Log and Logf calls even if the test succeeds.
@@ -52,6 +52,19 @@ parameters:
       (Sets -cover.)
     type: string
     default: "./..."
+  module-path:
+    description: |
+      Use a different path for the go module.
+    type: string
+    default: "."
+  skip-packages:
+    description: |
+      Disable testing certain packages. You can use a grep regex here.
+    type: string
+  cover:
+    description: |
+      Enable cover without specifying cover packages. Will use the same as the tested packages.
+    type: boolean
 steps:
   - run:
       command: >-
@@ -64,6 +77,6 @@ steps:
         -p <<parameters.parallel>>
         -covermode=<<parameters.covermode>>
         <<# parameters.verbose >>-v<</ parameters.verbose >>
-        <<parameters.packages>>
+        $(go list <<parameters.packages>> <<# parameters.skip-packages >>| grep -v <<parameters.skip-packages >><</ parameters.skip-packages >>)
         -coverpkg=<<parameters.coverpkg>>
       name: "go test"
