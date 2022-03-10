@@ -7,8 +7,8 @@ parameters:
   path:
     description: "Path to cache."
     type: string
-    # /home/circleci/go is the GOPATH in the cimg/go Docker image
-    default: "/home/circleci/go/pkg/mod"
+    # /home/ecosia/go is the GOPATH in the cimg/go Docker image
+    default: "/home/ecosia/go/pkg/mod"
 steps:
   - save_cache:
       key: << parameters.key >>-{{ arch }}-{{ checksum "go.sum"  }}

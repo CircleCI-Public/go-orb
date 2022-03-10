@@ -4,7 +4,7 @@ usage:
   version: 2.1
 
   orbs:
-    go: circleci/go@x.y
+    go: ecosia/go@x.y
 
   workflows:
     main:
