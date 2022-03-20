@@ -1,0 +1,35 @@
+description: Configure executor to authorize private module downloads.
+parameters:
+  basic-auth-id:
+    default: oauth2
+    description: The basic authentication identifier.
+    type: string
+  basic-auth-secret:
+    default: BASIC_AUTH_SECRET
+    description: The environment variable storing the basic authentication secret.
+    type: env_var_name
+  path:
+    description: The private module path.
+    type: string
+  protocol:
+    default: https
+    description: The protocol to use to perform Git operations.
+    enum:
+      - https
+    type: enum
+steps:
+  - when:
+      condition:
+        equal: [ << parameters.protocol >>, "https" ]
+      steps:
+        - run:
+            name: Configure Git authentication
+            command: |
+              git config --global \
+                url."https://<< parameters.basic-auth-id >>:<< parameters.basic-auth-secret >>@<< parameters.path >>".insteadOf \
+                "https://<< parameters.path >>"
+  - run:
+      name: Configure GOPRIVATE Go env var
+      command: |
+        GOPRIVATE="$(go env GOPRIVATE)"
+        go env -w GOPRIVATE="${GOPRIVATE:+$GOPRIVATE,}<< parameters.path >>"

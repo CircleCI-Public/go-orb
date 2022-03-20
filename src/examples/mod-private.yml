@@ -1,0 +1,23 @@
+description: "Configure environment to download private Go modules"
+
+usage:
+  version: 2.1
+
+  orbs:
+    go: circleci/go@x.y
+
+  workflows:
+    main:
+      jobs:
+        - build
+  jobs:
+    build:
+      executor:
+        name: go/default
+        tag: "1.16"
+      steps:
+        - checkout
+        - go/mod-private:
+            basic-auth-secret: GITHUB_PRIVATE_TOKEN
+            path: "github.com/circleci"
+        - go/mod-download-cached

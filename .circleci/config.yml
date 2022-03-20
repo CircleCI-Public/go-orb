@@ -148,3 +148,18 @@ jobs:
       - go/install:
           version: 1.16.4
       - run: go version && go build ./...
+  int-test-mod-private-https:
+    environment:
+      GITHUB_PRIVATE_TOKEN: personal-access-token
+    executor:
+      name: go/default
+      tag: "1.17"
+    steps:
+      - run:
+          name: "Check out sample project"
+          command: git clone https://github.com/CircleCI-Public/circleci-demo-go.git ~/project
+      - go/mod-private:
+          basic-auth-secret: GITHUB_PRIVATE_TOKEN
+          path: github.com/circleci
+      - go/mod-download-cached
+      - run: go env GOPRIVATE && git config --get url."https://oauth2:personal-access-token@github.com/circleci"
