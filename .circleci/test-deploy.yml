@@ -36,7 +36,7 @@ jobs:
           key: "integration"
   int-test-macos-executor:
     macos:
-      xcode: "11.5.0"
+      xcode: "14.1.0"
     steps:
       - run:
           name: "Check out sample project."
