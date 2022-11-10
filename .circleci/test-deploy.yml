@@ -1,0 +1,105 @@
+version: 2.1
+orbs:
+  go: circleci/go@dev:<<pipeline.git.revision>>
+  orb-tools: circleci/orb-tools@11.5
+filters: &filters
+  tags:
+    only: /.*/
+jobs:
+  int-test-cimg-go:
+    executor:
+      name: go/default
+      tag: "1.13"
+    steps:
+      - run:
+          name: "Check out sample project."
+          command: git clone https://github.com/CircleCI-Public/circleci-demo-go.git ~/project
+      - go/load-cache:
+          key: "integration"
+      - go/mod-download
+      - run: go version && go build ./...
+      - go/save-cache:
+          key: "integration"
+  int-test-cimg-base:
+    docker:
+      - image: cimg/base:stable
+    steps:
+      - run:
+          name: "Check out sample project."
+          command: git clone https://github.com/CircleCI-Public/circleci-demo-go.git ~/project
+      - go/install
+      - go/load-cache:
+          key: "integration"
+      - go/mod-download
+      - run: go version && go build ./...
+      - go/save-cache:
+          key: "integration"
+  int-test-macos-executor:
+    macos:
+      xcode: "11.5.0"
+    steps:
+      - run:
+          name: "Check out sample project."
+          command: git clone https://github.com/CircleCI-Public/circleci-demo-go.git ~/project
+      - go/install
+      - go/load-cache:
+          key: "integration"
+      - go/mod-download
+      - run: go version && go build ./...
+      - go/save-cache:
+          key: "integration"
+  int-test-vm-linux:
+    machine:
+      image: ubuntu-2004:202104-01
+    steps:
+      - run:
+          name: "Check out sample project."
+          command: git clone https://github.com/CircleCI-Public/circleci-demo-go.git ~/project
+      - go/install:
+          version: 1.16.4
+      - go/load-cache:
+          key: "integration"
+      - go/mod-download
+      - run: go version && go build ./...
+      - go/save-cache:
+          key: "integration"
+  # test to make sure the dirty cache issue doesn't crop back up
+  int-test-dirty-cache:
+    machine:
+      image: ubuntu-2004:202104-01
+    steps:
+      - run:
+          name: "Check out sample project."
+          command: git clone https://github.com/CircleCI-Public/circleci-demo-go.git ~/project
+      - go/install:
+          version: 1.15.1
+      - go/load-cache:
+          key: "integration"
+      - go/mod-download
+      - run: go version && go build ./...
+      - go/save-cache:
+          key: "integration"
+      - go/install:
+          version: 1.16.4
+      - run: go version && go build ./...
+workflows:
+  test-deploy:
+    jobs:
+      # Make sure to include "filters: *filters" in every test job you want to run as part of your deployment.
+      - command-tests:
+          filters: *filters
+      - orb-tools/pack:
+          filters: *filters
+      - orb-tools/publish:
+          orb-name: circleci/go
+          vcs-type: << pipeline.project.type >>
+          pub-type: production
+          requires:
+            - orb-tools/pack
+            - command-tests
+          context: orb-publisher
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /^v[0-9]+\.[0-9]+\.[0-9]+$/

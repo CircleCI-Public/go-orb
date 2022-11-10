@@ -1,0 +1,150 @@
+version: 2.1  # v2.1 is the minimal config version needed to support orbs
+
+parameters:
+  # These pipeline parameters are required by the
+  # "trigger-integration-tests-workflow" job, by default.
+  run-integration-tests:
+    type: boolean
+    default: false
+  dev-orb-version:
+    type: string
+    default: "dev:alpha"
+
+orbs:
+  go: circleci/go@<<pipeline.parameters.dev-orb-version>>
+  orb-tools: circleci/orb-tools@9.1
+
+workflows:
+  lint_pack-validate_publish-dev:  # runs on every commit
+    unless: << pipeline.parameters.run-integration-tests >>
+    jobs:
+      - orb-tools/lint
+      - orb-tools/pack
+      - orb-tools/publish-dev:
+          # release dev version of orb, for testing & possible publishing.
+          # orb will be published as dev:alpha and dev:${CIRCLE_SHA1:0:7}.
+          orb-name: circleci/go
+          requires:
+            - orb-tools/pack
+          context: orb-publishing
+      - orb-tools/trigger-integration-tests-workflow:
+          # trigger an integration workflow to test the
+          # dev:${CIRCLE_SHA1:0:7} version of your orb
+          name: trigger-integration-dev
+          requires:
+            - orb-tools/publish-dev
+          context: orb-publishing
+  integration-tests_prod-release:
+    # This `integration-tests_prod-release` workflow will only run
+    # when the run-integration-tests pipeline parameter is set to true.
+    # It is meant to be triggered by the "trigger-integration-tests-workflow"
+    # job, and run tests on <your orb>@dev:${CIRCLE_SHA1:0:7}.
+    when: << pipeline.parameters.run-integration-tests >>
+    jobs:
+      - int-test-cimg-go
+      - int-test-cimg-base
+      - int-test-macos-executor
+      - int-test-vm-linux
+      - int-test-dirty-cache
+
+      # publish a semver version of the orb. relies on
+      # the commit subject containing the text "[semver:patch|minor|major|skip]"
+      # as that will determine whether a patch, minor or major
+      # version will be published or if publishing should
+      # be skipped.
+      # e.g. [semver:patch] will cause a patch version to be published.
+      - orb-tools/dev-promote-prod-from-commit-subject:
+          orb-name: circleci/go
+          context: orb-publishing
+          add-pr-comment: true
+          bot-token-variable: GHI_TOKEN
+          bot-user: cpe-bot
+          fail-if-semver-not-indicated: true
+          publish-version-tag: true
+          requires:
+            - int-test-cimg-go
+            - int-test-cimg-base
+            - int-test-macos-executor
+            - int-test-vm-linux
+            - int-test-dirty-cache
+          filters:
+            branches:
+              only: master
+
+jobs:
+  int-test-cimg-go:
+    executor:
+      name: go/default
+      tag: "1.13"
+    steps:
+      - run:
+          name: "Check out sample project."
+          command: git clone https://github.com/CircleCI-Public/circleci-demo-go.git ~/project
+      - go/load-cache:
+          key: "integration"
+      - go/mod-download
+      - run: go version && go build ./...
+      - go/save-cache:
+          key: "integration"
+  int-test-cimg-base:
+    docker:
+      - image: cimg/base:stable
+    steps:
+      - run:
+          name: "Check out sample project."
+          command: git clone https://github.com/CircleCI-Public/circleci-demo-go.git ~/project
+      - go/install
+      - go/load-cache:
+          key: "integration"
+      - go/mod-download
+      - run: go version && go build ./...
+      - go/save-cache:
+          key: "integration"
+  int-test-macos-executor:
+    macos:
+      xcode: "11.5.0"
+    steps:
+      - run:
+          name: "Check out sample project."
+          command: git clone https://github.com/CircleCI-Public/circleci-demo-go.git ~/project
+      - go/install
+      - go/load-cache:
+          key: "integration"
+      - go/mod-download
+      - run: go version && go build ./...
+      - go/save-cache:
+          key: "integration"
+  int-test-vm-linux:
+    machine:
+      image: ubuntu-2004:202104-01
+    steps:
+      - run:
+          name: "Check out sample project."
+          command: git clone https://github.com/CircleCI-Public/circleci-demo-go.git ~/project
+      - go/install:
+          version: 1.16.4
+      - go/load-cache:
+          key: "integration"
+      - go/mod-download
+      - run: go version && go build ./...
+      - go/save-cache:
+          key: "integration"
+  # test to make sure the dirty cache issue doesn't crop back up
+  int-test-dirty-cache:
+    machine:
+      image: ubuntu-2004:202104-01
+    steps:
+      - run:
+          name: "Check out sample project."
+          command: git clone https://github.com/CircleCI-Public/circleci-demo-go.git ~/project
+      - go/install:
+          version: 1.15.1
+      - go/load-cache:
+          key: "integration"
+      - go/mod-download
+      - run: go version && go build ./...
+      - go/save-cache:
+          key: "integration"
+      - go/install:
+          version: 1.16.4
+      - run: go version && go build ./...
