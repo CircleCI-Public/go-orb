@@ -36,7 +36,7 @@ jobs:
           key: "integration"
   int-test-macos-executor:
     macos:
-      xcode: "11.5.0"
+      xcode: "14.1.0"
     steps:
       - run:
           name: "Check out sample project."
@@ -86,7 +86,15 @@ workflows:
   test-deploy:
     jobs:
       # Make sure to include "filters: *filters" in every test job you want to run as part of your deployment.
-      - command-tests:
+      - int-test-cimg-go:
+          filters: *filters
+      - int-test-cimg-base:
+          filters: *filters
+      - int-test-macos-executor:
+          filters: *filters
+      - int-test-vm-linux:
+          filters: *filters
+      - int-test-dirty-cache:
           filters: *filters
       - orb-tools/pack:
           filters: *filters
@@ -96,7 +104,11 @@ workflows:
           pub-type: production
           requires:
             - orb-tools/pack
-            - command-tests
+            - int-test-cimg-go
+            - int-test-cimg-base
+            - int-test-macos-executor
+            - int-test-vm-linux
+            - int-test-dirty-cache
           context: orb-publisher
           filters:
             branches:

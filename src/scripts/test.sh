@@ -2,19 +2,19 @@
 COVER_PROFILE=$(eval echo "$ORB_EVAL_COVER_PROFILE")
 
 if [ -n "$ORB_VAL_RACE" ]; then
-  set -- "$@" -race
+  set "$@" -- -race
 fi
 
 if [ -n "$ORB_VAL_FAIL_FAST" ]; then
-  set -- "$@" -failfast
+  set "$@" -- -failfast
 fi
 
 if [ -n "$ORB_VAL_SHORT" ]; then
-  set -- "$@" -short
+  set "$@" -- -short
 fi
 
 if [ -n "$ORB_VAL_VERBOSE" ]; then
-  set -- "$@" -v
+  set "$@" -- -v
 fi
 
 set -x

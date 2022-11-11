@@ -54,16 +54,16 @@ parameters:
     default: "./..."
 steps:
   - run:
-      command: >-
-        go test
-        <<# parameters.race >>-race<</ parameters.race >>
-        -count=<<parameters.count>>
-        -coverprofile=<<parameters.coverprofile>>
-        <<# parameters.failfast >>-failfast<</ parameters.failfast >>
-        <<# parameters.short >>-short<</ parameters.short >>
-        -p <<parameters.parallel>>
-        -covermode=<<parameters.covermode>>
-        <<# parameters.verbose >>-v<</ parameters.verbose >>
-        <<parameters.packages>>
-        -coverpkg=<<parameters.coverpkg>>
+      environment:
+        ORB_VAL_RACE: <<parameters.race>>
+        ORB_VAL_COUNT: <<parameters.count>>
+        ORB_VAL_FAIL_FAST: <<parameters.failfast>>
+        ORB_VAL_SHORT: <<parameters.short>>
+        ORB_VAL_PARALLEL: <<parameters.parallel>>
+        ORB_VAL_COVER_MODE: <<parameters.covermode>>
+        ORB_VAL_VERBOSE: <<parameters.verbose>>
+        ORB_VAL_PACKAGES: <<parameters.packages>>
+        ORB_VAL_COVERPKG: <<parameters.coverpkg>>
+        ORB_EVAL_COVER_PROFILE: <<parameters.coverprofile>>
+      command: <<include(scripts/test.sh)>>
       name: "go test"
