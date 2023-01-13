@@ -1,6 +1,6 @@
 description: |
-  "The official CircleCI Go Docker image on Docker Hub.
-  Found here: https://hub.docker.com/r/cimg/go"
+  The official CircleCI Go Docker image on Docker Hub.
+  Found here: https://hub.docker.com/r/cimg/go
 parameters:
   tag:
     description: "The `cimg/go` Docker image version tag."
