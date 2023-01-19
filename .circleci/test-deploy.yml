@@ -41,7 +41,7 @@ jobs:
       - go/install-go:
           version: 1.17.2
       - run:
-          name: "Check if pip is accessible"
+          name: "Check if the correct python version is accessible & installed"
           command: python --version | grep -q "^Python 3.11"
   int-test-macos-executor:
     macos:
