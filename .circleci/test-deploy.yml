@@ -38,7 +38,7 @@ jobs:
     docker:
       - image: cimg/python:3.11
     steps:
-      - go/install-go:
+      - go/install:
           version: 1.17.2
       - run:
           name: "Check if the correct python version is accessible & installed"
