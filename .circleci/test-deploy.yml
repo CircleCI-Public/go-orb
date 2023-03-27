@@ -34,6 +34,15 @@ jobs:
       - run: go version && go build ./...
       - go/save-cache:
           key: "integration"
+  int-test-cimg-python:
+    docker:
+      - image: cimg/python:3.11
+    steps:
+      - go/install-go:
+          version: 1.17.2
+      - run:
+          name: "Check if the correct python version is accessible & installed"
+          command: python --version | grep -q "^Python 3.11"
   int-test-macos-executor:
     macos:
       xcode: "14.1.0"
@@ -90,6 +99,8 @@ workflows:
           filters: *filters
       - int-test-cimg-base:
           filters: *filters
+      - int-test-cimg-python:
+          filters: *filters
       - int-test-macos-executor:
           filters: *filters
       - int-test-vm-linux:
@@ -106,6 +117,7 @@ workflows:
             - orb-tools/pack
             - int-test-cimg-go
             - int-test-cimg-base
+            - int-test-cimg-python
             - int-test-macos-executor
             - int-test-vm-linux
             - int-test-dirty-cache
