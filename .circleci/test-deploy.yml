@@ -123,6 +123,8 @@ workflows:
           filters: *filters
       - int-test-dirty-cache:
           filters: *filters
+      - int-test-vm-arm64:
+          filters: *filters
       - orb-tools/pack:
           filters: *filters
       - orb-tools/publish:
@@ -137,6 +139,7 @@ workflows:
             - int-test-macos-executor
             - int-test-vm-linux
             - int-test-dirty-cache
+            - int-test-vm-arm64
           context: orb-publisher
           filters:
             branches:
