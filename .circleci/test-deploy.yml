@@ -72,6 +72,22 @@ jobs:
       - run: go version && go build ./...
       - go/save-cache:
           key: "integration"
+  int-test-vm-arm64:
+    machine:
+      image: ubuntu-2204:2023.07.1
+    resource_class: arm.medium
+    steps:
+      - run:
+          name: "Check out sample project."
+          command: git clone https://github.com/CircleCI-Public/circleci-demo-go.git ~/project
+      - go/install:
+          version: 1.16.4
+      - go/load-cache:
+          key: "integration-arm"
+      - go/mod-download
+      - run: go version && go build ./...
+      - go/save-cache:
+          key: "integration-arm"
   # test to make sure the dirty cache issue doesn't crop back up
   int-test-dirty-cache:
     machine:
@@ -107,6 +123,8 @@ workflows:
           filters: *filters
       - int-test-dirty-cache:
           filters: *filters
+      - int-test-vm-arm64:
+          filters: *filters
       - orb-tools/pack:
           filters: *filters
       - orb-tools/publish:
@@ -121,6 +139,7 @@ workflows:
             - int-test-macos-executor
             - int-test-vm-linux
             - int-test-dirty-cache
+            - int-test-vm-arm64
           context: orb-publisher
           filters:
             branches:
