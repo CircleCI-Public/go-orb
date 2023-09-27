@@ -11,7 +11,7 @@ parameters:
     default: true
   cache-key:
     description: |
-      String to use in cache key. Typically overriden when needed to bust cache.
+      String to use in cache key. Typically overridden when needed to bust cache.
     type: string
     default: "v2"
 steps:
