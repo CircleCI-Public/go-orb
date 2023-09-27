@@ -5,19 +5,14 @@ description: |
 
 parameters:
   version:
-  description: The GoRelaser version to install. Defaults to latest
-  type: string
-  default: "latest"
+    description: The GoRelaser version to install. Defaults to latest
+    type: string
+    default: "latest"
 
 steps:
-  # - run:
-  #     name: "Install Go"
-  #     environment:
-  #       ORB_VAL_VERSION: << parameters.version >>
-  #     command: << include(scripts/install.sh) >>
   - run:
       name: "Installing GoReleaser"
-      command: | 
-        go install github.com/goreleaser/goreleaser@<< parameters.version >>
-        goreleaser --version
+      environment:
+        GO_STR_VERSION: << parameters.version >>
+      command: << include(scripts/install-goreleaser.sh) >>
 
