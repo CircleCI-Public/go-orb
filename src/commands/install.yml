@@ -44,4 +44,4 @@ steps:
         - save_cache:
             key: go-binary-<<parameters.cache_key>>-<<parameters.version>>-{{ arch }}
             paths:
-              - /usr/local/go
+              - "/usr/local/go"
