@@ -17,9 +17,9 @@ usage:
         tag: "1.16"
       steps:
         - checkout
-        - go/load-cache
-        - go/mod-download
-        - go/save-cache
+        - go/load_cache
+        - go/mod_download
+        - go/save_cache
         - go/test:
             race: true
             failfast: true

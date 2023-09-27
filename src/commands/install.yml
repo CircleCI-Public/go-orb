@@ -9,7 +9,7 @@ parameters:
     description: Whether or not to cache the binary.
     type: boolean
     default: true
-  cache-key:
+  cache_key:
     description: |
       String to use in cache key. Typically overriden when needed to bust cache.
     type: string
@@ -28,7 +28,7 @@ steps:
               $SUDO chown -R $(whoami): /usr/local/go
         - restore_cache:
             keys:
-              - go-binary-<<parameters.cache-key>>-<<parameters.version>>-{{ arch }}
+              - go-binary-<<parameters.cache_key>>-<<parameters.version>>-{{ arch }}
   - run:
       name: "Install Go"
       environment:
@@ -42,6 +42,6 @@ steps:
         equal: [ <<parameters.cache>>, true ]
       steps:
         - save_cache:
-            key: go-binary-<<parameters.cache-key>>-<<parameters.version>>-{{ arch }}
+            key: go-binary-<<parameters.cache_key>>-<<parameters.version>>-{{ arch }}
             paths:
               - /usr/local/go

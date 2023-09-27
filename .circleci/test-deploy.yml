@@ -1,10 +1,15 @@
 version: 2.1
 orbs:
-  go: circleci/go@dev:<<pipeline.git.revision>>
-  orb-tools: circleci/orb-tools@11.5
+  orb-tools: circleci/orb-tools@12.0
+  go: {}
 filters: &filters
   tags:
     only: /.*/
+release-filters: &release-filters
+  branches:
+    ignore: /.*/
+  tags:
+    only: /^v[0-9]+\.[0-9]+\.[0-9]+$/
 jobs:
   int-test-cimg-go:
     executor:
@@ -14,11 +19,11 @@ jobs:
       - run:
           name: "Check out sample project."
           command: git clone https://github.com/CircleCI-Public/circleci-demo-go.git ~/project
-      - go/load-cache:
+      - go/load_cache:
           key: "integration"
-      - go/mod-download
+      - go/mod_download
       - run: go version && go build ./...
-      - go/save-cache:
+      - go/save_cache:
           key: "integration"
   int-test-cimg-base:
     docker:
@@ -28,11 +33,11 @@ jobs:
           name: "Check out sample project."
           command: git clone https://github.com/CircleCI-Public/circleci-demo-go.git ~/project
       - go/install
-      - go/load-cache:
+      - go/load_cache:
           key: "integration"
-      - go/mod-download
+      - go/mod_download
       - run: go version && go build ./...
-      - go/save-cache:
+      - go/save_cache:
           key: "integration"
   int-test-cimg-python:
     docker:
@@ -51,11 +56,11 @@ jobs:
           name: "Check out sample project."
           command: git clone https://github.com/CircleCI-Public/circleci-demo-go.git ~/project
       - go/install
-      - go/load-cache:
+      - go/load_cache:
           key: "integration"
-      - go/mod-download
+      - go/mod_download
       - run: go version && go build ./...
-      - go/save-cache:
+      - go/save_cache:
           key: "integration"
   int-test-vm-linux:
     machine:
@@ -66,11 +71,11 @@ jobs:
           command: git clone https://github.com/CircleCI-Public/circleci-demo-go.git ~/project
       - go/install:
           version: 1.16.4
-      - go/load-cache:
+      - go/load_cache:
           key: "integration"
-      - go/mod-download
+      - go/mod_download
       - run: go version && go build ./...
-      - go/save-cache:
+      - go/save_cache:
           key: "integration"
   int-test-vm-arm64:
     machine:
@@ -82,11 +87,11 @@ jobs:
           command: git clone https://github.com/CircleCI-Public/circleci-demo-go.git ~/project
       - go/install:
           version: 1.16.4
-      - go/load-cache:
+      - go/load_cache:
           key: "integration-arm"
-      - go/mod-download
+      - go/mod_download
       - run: go version && go build ./...
-      - go/save-cache:
+      - go/save_cache:
           key: "integration-arm"
   # test to make sure the dirty cache issue doesn't crop back up
   int-test-dirty-cache:
@@ -98,11 +103,11 @@ jobs:
           command: git clone https://github.com/CircleCI-Public/circleci-demo-go.git ~/project
       - go/install:
           version: 1.15.1
-      - go/load-cache:
+      - go/load_cache:
           key: "integration"
-      - go/mod-download
+      - go/mod_download
       - run: go version && go build ./...
-      - go/save-cache:
+      - go/save_cache:
           key: "integration"
       - go/install:
           version: 1.16.4
@@ -141,8 +146,4 @@ workflows:
             - int-test-dirty-cache
             - int-test-vm-arm64
           context: orb-publisher
-          filters:
-            branches:
-              ignore: /.*/
-            tags:
-              only: /^v[0-9]+\.[0-9]+\.[0-9]+$/
+          filters:  *release-filters
