@@ -1,5 +1,5 @@
 description: |
-  Build Go applications and release them on GitHub. 
+  Build Go applications and release them on GitHub.
   GoReleaser CLI must be installed and a GitHub Token
   with write:packages permissions is also required.
 
@@ -9,6 +9,13 @@ parameters:
       A GitHub Token is with write:packages permissions is required.
     type: string
     default: GITHUB_TOKEN
+  project-path:
+    description: |
+      The path to the directory containing your Go project files:
+      .goreleaser.yaml, go.mod, main.go.
+      Defaults to $HOME.
+    type: string
+    default: $HOME
   validate-yaml:
     description: |
       Set to true to validate .goreleaser.yaml.
@@ -26,4 +33,5 @@ steps:
         GITHUB_TOKEN: << parameters.github-token >>
         GO_BOOL_VALIDATE_YAML: << parameters.validate-yaml >>
         GO_BOOL_PUBLISH_RELEASE: << parameters.publish-release >>
+        GO_EVAL_PROJECT_PATH: << parameters.project-path >>
       command: << include(scripts/goreleaser-release.sh) >>

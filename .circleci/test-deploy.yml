@@ -19,8 +19,10 @@ jobs:
     steps:
       - go/install-goreleaser
       - go/goreleaser-release:
+          github-token: TEST_GH_TOKEN
           validate-yaml: true
           publish-release: false
+          project-path: ~/project/tests
   int-test-cimg-go:
     executor:
       name: go/default
@@ -129,6 +131,11 @@ workflows:
       - int-test-goreleaser-install:
           filters: *filters
       - int-test-goreleaser-release:
+          pre-steps:
+            - checkout
+            - run:
+                name: Change to test directory
+                command: cd ~/project/tests
           filters: *filters
       - int-test-cimg-go:
           filters: *filters
