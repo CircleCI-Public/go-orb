@@ -11,8 +11,16 @@ jobs:
       name: go/default
       tag: "1.20.8"
     steps:
-      - checkout
       - go/install-goreleaser
+  int-test-goreleaser-release:
+    executor:
+      name: go/default
+      tag: "1.20.8"
+    steps:
+      - go/install-goreleaser
+      - go/goreleaser-release:
+          validate-yaml: true
+          publish-release: false
   int-test-cimg-go:
     executor:
       name: go/default
@@ -120,6 +128,8 @@ workflows:
       # Make sure to include "filters: *filters" in every test job you want to run as part of your deployment.
       - int-test-goreleaser-install:
           filters: *filters
+      - int-test-goreleaser-release:
+          filters: *filters
       - int-test-cimg-go:
           filters: *filters
       - int-test-cimg-base:
@@ -150,6 +160,7 @@ workflows:
             - int-test-dirty-cache
             - int-test-vm-arm64
             - int-test-goreleaser-install
+            - int-test-goreleaser-release
           context: orb-publisher
           filters:
             branches:
