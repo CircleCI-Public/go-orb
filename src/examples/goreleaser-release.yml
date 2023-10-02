@@ -1,0 +1,25 @@
+description: |
+  Build Go applications and release them on GitHub.
+  Install GoReleaser CLI and add a GitHub Token with
+  write:packages permissions and store as environment variable.
+usage:
+  version: 2.1
+  orbs:
+    go: circleci/go@x.y
+  jobs:
+    go-build-release:
+      executor:
+        name: go/default
+        tag: "1.20.8"
+      steps:
+        - go/install-goreleaser
+        - go/goreleaser-release:
+            # validate .goreleaser.yml 
+            validate-yaml: true
+            # publish release on GitHub
+            publish-release: true
+            project-path: /path/to/Go/project
+  workflows:
+    main:
+      jobs:
+        - go-build-release
