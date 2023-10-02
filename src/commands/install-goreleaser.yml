@@ -1,11 +1,10 @@
 description: |
   GoReleaser is a release automation tool for managing Go projects.
   Install GoReleaser in your build. Golang must be installed.
-  A GitHub Token is with write:packages permissions is also required.
 
 parameters:
   version:
-    description: The GoRelaser version to install. Defaults to latest
+    description: The GoReleaser version to install. Defaults to latest
     type: string
     default: "latest"
 
