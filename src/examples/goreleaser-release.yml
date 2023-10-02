@@ -14,7 +14,7 @@ usage:
       steps:
         - go/install-goreleaser
         - go/goreleaser-release:
-            # validate .goreleaser.yml 
+            # validate .goreleaser.yml
             validate-yaml: true
             # publish release on GitHub
             publish-release: true
