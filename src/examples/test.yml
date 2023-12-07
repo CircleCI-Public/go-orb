@@ -24,3 +24,4 @@ usage:
             race: true
             failfast: true
             covermode: "atomic" # The preferred setting when enabling race
+            timeout: "15m" # In cases where a test has a valid usecase to go longer than the default 10m
