@@ -23,6 +23,10 @@ parameters:
     description: tell long-running tests to shorten their run time
     type: boolean
     default: false
+  timeout:
+    description: timeout the test and panic after value - for situations where a test has a valid usecase to go longer than 10m
+    type: string
+    default: "10m"
   parallel:
     description: |
       Allow parallel execution of test functions that call t.Parallel.
@@ -59,6 +63,7 @@ steps:
         ORB_VAL_COUNT: <<parameters.count>>
         ORB_VAL_FAIL_FAST: <<parameters.failfast>>
         ORB_VAL_SHORT: <<parameters.short>>
+        ORB_VAL_TIMEOUT: <<parameters.timeout>>
         ORB_VAL_PARALLEL: <<parameters.parallel>>
         ORB_VAL_COVER_MODE: <<parameters.covermode>>
         ORB_VAL_VERBOSE: <<parameters.verbose>>
