@@ -17,13 +17,13 @@ jobs:
   int-test-goreleaser-install:
     executor:
       name: go/default
-      tag: "1.20.8"
+      tag: "1.21.5"
     steps:
       - go/install-goreleaser
   int-test-goreleaser-release:
     executor:
       name: go/default
-      tag: "1.20.8"
+      tag: "1.21.5"
     steps:
       - go/install-goreleaser
       - go/goreleaser-release:
