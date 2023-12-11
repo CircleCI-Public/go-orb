@@ -1,21 +1,29 @@
 version: 2.1
 orbs:
-  go: circleci/go@dev:<<pipeline.git.revision>>
-  orb-tools: circleci/orb-tools@11.5
+  go: {}
+  orb-tools: circleci/orb-tools@12.0
+
 filters: &filters
   tags:
     only: /.*/
+
+release-filters: &release-filters
+  branches:
+    ignore: /.*/
+  tags:
+    only: /^v[0-9]+\.[0-9]+\.[0-9]+$/
+
 jobs:
   int-test-goreleaser-install:
     executor:
       name: go/default
-      tag: "1.20.8"
+      tag: "1.21.5"
     steps:
       - go/install-goreleaser
   int-test-goreleaser-release:
     executor:
       name: go/default
-      tag: "1.20.8"
+      tag: "1.21.5"
     steps:
       - go/install-goreleaser
       - go/goreleaser-release:
@@ -152,11 +160,12 @@ workflows:
       - int-test-vm-arm64:
           filters: *filters
       - orb-tools/pack:
-          filters: *filters
+          filters: *release-filters
       - orb-tools/publish:
-          orb-name: circleci/go
-          vcs-type: << pipeline.project.type >>
-          pub-type: production
+          orb_name: circleci/go
+          vcs_type: << pipeline.project.type >>
+          pub_type: production
+          github_token: GHI_TOKEN
           requires:
             - orb-tools/pack
             - int-test-cimg-go
@@ -169,8 +178,4 @@ workflows:
             - int-test-goreleaser-install
             - int-test-goreleaser-release
           context: orb-publisher
-          filters:
-            branches:
-              ignore: /.*/
-            tags:
-              only: /^v[0-9]+\.[0-9]+\.[0-9]+$/
+          filters: *release-filters
