@@ -21,6 +21,5 @@ set -x
 go test -count="$ORB_VAL_COUNT" -coverprofile="$COVER_PROFILE" \
     -p "$ORB_VAL_PARALLEL" -covermode="$ORB_VAL_COVER_MODE" \
     "$ORB_VAL_PACKAGES" -coverpkg="$ORB_VAL_PACKAGES" \
-    -timeout="$ORB_VAL_TIMEOUT" \
     "$@"
 set +x
