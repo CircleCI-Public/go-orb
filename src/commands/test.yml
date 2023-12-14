@@ -46,6 +46,10 @@ parameters:
     type: boolean
     # Switch this to true in a major release
     default: false
+  no_output_timeout:
+    type: string
+    default: 10m
+    description: The amount of time to allow the command to run before timing out.
   coverpkg:
     description: |
       Apply coverage analysis in each test to packages matching the patterns.
@@ -67,3 +71,4 @@ steps:
         ORB_EVAL_COVER_PROFILE: <<parameters.coverprofile>>
       command: <<include(scripts/test.sh)>>
       name: "go test"
+      no_output_timeout: <<parameters.no_output_timeout>>
