@@ -49,7 +49,7 @@ parameters:
   no_output_timeout:
     type: string
     default: 10m
-    description: The amount of time to allow the docker command to run before timing out.
+    description: The amount of time to allow the command to run before timing out.
   coverpkg:
     description: |
       Apply coverage analysis in each test to packages matching the patterns.
