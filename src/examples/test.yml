@@ -26,5 +26,3 @@ usage:
             covermode: "atomic" # The preferred setting when enabling race
             timeout: 15m #The amount of time to allow the go tests to run before timing out, defaults to "10m"
             no_output_timeout: 15m # The amount of time to allow the orb to run without output before timing out, defaults to "10m"
-
-            
