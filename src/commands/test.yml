@@ -19,6 +19,10 @@ parameters:
     description: do not start new tests after the first test failure
     type: boolean
     default: false
+  run:
+    description: A regexp matching the names of the tests and examples that will be executed.
+    type: string
+    default: ""
   short:
     description: tell long-running tests to shorten their run time
     type: boolean
@@ -60,6 +64,14 @@ parameters:
       (Sets -cover.)
     type: string
     default: "./..."
+  build_tags:
+    description: A comma-separated list of additional build tags to consider satisfied during the build.
+    type: string
+    default: ""
+  build_ldflags:
+    description: Arguments to pass on each go tool link invocation.
+    type: string
+    default: ""
 steps:
   - run:
       environment:
@@ -73,6 +85,9 @@ steps:
         ORB_VAL_VERBOSE: <<parameters.verbose>>
         ORB_VAL_PACKAGES: <<parameters.packages>>
         ORB_VAL_COVERPKG: <<parameters.coverpkg>>
+        ORB_VAL_BUILD_TAGS: <<parameters.build_tags>>
+        ORB_VAL_BUILD_LDFLAGS: <<parameters.build_ldflags>>
+        ORB_VAL_RUN: <<parameters.run>>
         ORB_EVAL_COVER_PROFILE: <<parameters.coverprofile>>
       command: <<include(scripts/test.sh)>>
       name: "go test"
