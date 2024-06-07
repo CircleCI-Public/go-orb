@@ -39,6 +39,7 @@ go test -count="$ORB_VAL_COUNT" -p "${ORB_VAL_PARALLEL}" \
     -parallel "${ORB_VAL_PARALLEL_TESTS}" \
     -coverprofile="$COVER_PROFILE" -covermode="$ORB_VAL_COVER_MODE" \
     "$ORB_VAL_PACKAGES" -coverpkg="$ORB_VAL_PACKAGES" \
-    -timeout="$ORB_VAL_TIMEOUT" \
+    -timeout="$ORB_VAL_TIMEOUT" -tags="$ORB_VAL_BUILD_TAGS" \
+    -ldflags="$ORB_VAL_BUILD_LDFLAGS" -run="$ORB_VAL_RUN" \
     "$@"
 set +x
