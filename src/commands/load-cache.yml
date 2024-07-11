@@ -4,7 +4,13 @@ parameters:
     description: "The cache key to use. The key is immutable."
     type: string
     default: "go-mod"
+  project-path:
+    description: |
+      The path to the directory containing your Go project files: go.mod, go.sum.
+      Defaults to $CIRCLE_WORKING_DIRECTORY.
+    type: string
+    default: $CIRCLE_WORKING_DIRECTORY
 steps:
   - restore_cache:
       keys:
-        - << parameters.key >>-{{ arch }}-{{ checksum "go.sum"  }}
+        - << parameters.key >>-{{ arch }}-{{ checksum "<< parameters.project-path >>/go.sum" }}
