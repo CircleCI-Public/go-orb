@@ -5,7 +5,7 @@ if [ -n "$ORB_VAL_RACE" ]; then
   set -- "$@" -race
 fi
 
-if [ -n "$ORB_VAL_FAIL_FAST" ]; then
+if [ "$ORB_VAL_FAILFAST" != "false" ]; then
   set -- "$@" -failfast
 fi
 
