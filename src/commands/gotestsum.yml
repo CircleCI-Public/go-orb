@@ -1,0 +1,36 @@
+description: |
+  Runs 'go test ./...' but includes extensive parameterization for finer tuning
+parameters:
+  project-path:
+    description: |
+      The path to the directory containing your Go project files:
+      .goreleaser.yaml, go.mod, main.go.
+      Defaults to $HOME.
+    type: string
+    default: ""
+  packages:
+    description: import tests to run, by path glob.
+    type: string
+    default: "./..."
+  junitfile:
+    description: file to save junit format xml file
+    type: string
+    default: "unit-tests.xml"
+  covermode:
+    description: mode used to count coverage
+    type: string
+    default: "atomic"
+  coverprofile:
+    description: file to save coverage profile
+    type: string
+    default: "cover-source.out"
+steps:
+  - run:
+      environment:
+        ORB_EVAL_PROJECT_PATH: <<parameters.project-path>>
+        ORB_VAL_PACKAGES: <<parameters.packages>>
+        ORB_VAL_JUNITFILE: <<parameters.junitfile>>
+        ORB_VAL_COVERMODE: <<parameters.covermode>>
+        ORB_EVAL_COVER_PROFILE: <<parameters.coverprofile>>
+      command: <<include(scripts/gotestsum.sh)>>
+      name: "gotestsum"

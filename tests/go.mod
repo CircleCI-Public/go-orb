@@ -1,3 +1,3 @@
-module main
+module circleci.com/go-orb
 
-go 1.20
+go 1.23.3
