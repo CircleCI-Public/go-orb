@@ -12,16 +12,28 @@ parameters:
     description: "Whether to use go-build cache."
     type: boolean
     default: true
+  build-path:
+    description: "Location of go-build cache."
+    type: string
+    default: "/home/circleci/.cache/go-build"
   mod:
     description: |
       Whether to use go module cache. If most of your dependencies are public, it is faster to use the public
       Go module proxy, so this defaults to `false`.
     type: boolean
     default: false
+  mod-path:
+    description: "Location of go module cache."
+    type: string
+    default: "/home/circleci/go/pkg/mod"
   golangci-lint:
     description: "Whether to use golangci-lint cache. Useful only in steps with linting, so defaults to false."
     type: boolean
     default: false
+  golangci-lint-path:
+    description: "Location of golangci-lint cache."
+    type: string
+    default: "/home/circleci/.cache/golangci-lint"
 steps:
   - when:
       condition: << parameters.build >>
@@ -44,13 +56,16 @@ steps:
       steps:
         - save-build-cache:
             key: << parameters.key >>
+            path: << parameters.build-path >>
   - when:
       condition: << parameters.mod >>
       steps:
         - save-mod-cache:
             key: << parameters.key >>
+            path: << parameters.mod-path >>
   - when:
       condition: << parameters.golangci-lint >>
       steps:
         - save-golangci-lint-cache:
             key: << parameters.key >>
+            path: << parameters.golangci-lint-path >>
