@@ -1,0 +1,10 @@
+description: "Load cached Go build cache."
+parameters:
+  key:
+    description: "User-configurable component for cache key. Useful for avoiding collisions in complex workflows."
+    type: string
+    default: ""
+steps:
+  - restore_cache:
+      keys:
+        - v1-<< parameters.key >>-golangci-lint-{{ .Environment.CIRCLE_JOB }}-{{ arch }}-{{ checksum "go.sum" }}-{{ epoch | round "72h" }}

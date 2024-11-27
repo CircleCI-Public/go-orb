@@ -17,12 +17,12 @@ usage:
         tag: "1.16"
       steps:
         - checkout
-        - go/load-cache
-        - go/mod-download
-        - go/save-cache
-        - go/test:
-            race: true
-            failfast: true
-            covermode: "atomic" # The preferred setting when enabling race
-            timeout: 15m #The amount of time to allow the go tests to run before timing out, defaults to "10m"
-            no_output_timeout: 15m # The amount of time to allow the orb to run without output before timing out, defaults to "10m"
+        - go/with-cache:
+            steps:
+              - go/mod-download
+              - go/test:
+                  race: true
+                  failfast: true
+                  covermode: "atomic" # The preferred setting when enabling race
+                  timeout: 15m #The amount of time to allow the go tests to run before timing out, defaults to "10m"
+                  no_output_timeout: 15m # The amount of time to allow the orb to run without output before timing out, defaults to "10m"
