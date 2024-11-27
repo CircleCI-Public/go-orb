@@ -1,5 +1,5 @@
 description: "Download and cache Go modules"
 steps:
-  - load-cache
+  - load-mod-cache
   - mod-download
-  - save-cache
+  - save-mod-cache

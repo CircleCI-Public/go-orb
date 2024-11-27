@@ -1,9 +1,9 @@
 description: "Save Go modules to cache."
 parameters:
   key:
-    description: "The cache key to use. The key is immutable."
+    description: "User-configurable component for cache key. Useful for avoiding collisions in complex workflows."
     type: string
-    default: "go-mod"
+    default: ""
   path:
     description: "Path to cache."
     type: string
@@ -11,6 +11,6 @@ parameters:
     default: "/home/circleci/go/pkg/mod"
 steps:
   - save_cache:
-      key: << parameters.key >>-{{ arch }}-{{ checksum "go.sum"  }}
+      key: v1-<< parameters.key >>-go-mod-{{ arch }}-{{ checksum "go.sum" }}
       paths:
         - << parameters.path >>
