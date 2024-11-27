@@ -34,17 +34,18 @@ jobs:
   int-test-cimg-go:
     executor:
       name: go/default
-      tag: "1.13"
+      tag: "1.23"
     steps:
       - run:
           name: "Check out sample project."
           command: git clone https://github.com/CircleCI-Public/circleci-demo-go.git ~/project
-      - go/load-cache:
+      - go/with-cache:
           key: "integration"
-      - go/mod-download
-      - run: go version && go build ./...
-      - go/save-cache:
-          key: "integration"
+          mod: true
+          golangci-lint: true
+          steps:
+            - go/mod-download
+            - run: go version && go build ./...
   int-test-cimg-base:
     docker:
       - image: cimg/base:stable
@@ -53,12 +54,13 @@ jobs:
           name: "Check out sample project."
           command: git clone https://github.com/CircleCI-Public/circleci-demo-go.git ~/project
       - go/install
-      - go/load-cache:
+      - go/with-cache:
           key: "integration"
-      - go/mod-download
-      - run: go version && go build ./...
-      - go/save-cache:
-          key: "integration"
+          mod: true
+          golangci-lint: true
+          steps:
+            - go/mod-download
+            - run: go version && go build ./...
   int-test-cimg-python:
     docker:
       - image: cimg/python:3.11
@@ -76,12 +78,13 @@ jobs:
           name: "Check out sample project."
           command: git clone https://github.com/CircleCI-Public/circleci-demo-go.git ~/project
       - go/install
-      - go/load-cache:
+      - go/with-cache:
           key: "integration"
-      - go/mod-download
-      - run: go version && go build ./...
-      - go/save-cache:
-          key: "integration"
+          mod: true
+          golangci-lint: true
+          steps:
+            - go/mod-download
+            - run: go version && go build ./...
   int-test-vm-linux:
     machine:
       image: ubuntu-2004:202104-01
@@ -91,12 +94,13 @@ jobs:
           command: git clone https://github.com/CircleCI-Public/circleci-demo-go.git ~/project
       - go/install:
           version: 1.16.4
-      - go/load-cache:
+      - go/with-cache:
           key: "integration"
-      - go/mod-download
-      - run: go version && go build ./...
-      - go/save-cache:
-          key: "integration"
+          mod: true
+          golangci-lint: true
+          steps:
+            - go/mod-download
+            - run: go version && go build ./...
   int-test-vm-arm64:
     machine:
       image: ubuntu-2204:2023.07.1
@@ -107,12 +111,13 @@ jobs:
           command: git clone https://github.com/CircleCI-Public/circleci-demo-go.git ~/project
       - go/install:
           version: 1.16.4
-      - go/load-cache:
-          key: "integration-arm"
-      - go/mod-download
-      - run: go version && go build ./...
-      - go/save-cache:
-          key: "integration-arm"
+      - go/with-cache:
+          key: "integration"
+          mod: true
+          golangci-lint: true
+          steps:
+            - go/mod-download
+            - run: go version && go build ./...
   # test to make sure the dirty cache issue doesn't crop back up
   int-test-dirty-cache:
     machine:
@@ -123,11 +128,11 @@ jobs:
           command: git clone https://github.com/CircleCI-Public/circleci-demo-go.git ~/project
       - go/install:
           version: 1.15.1
-      - go/load-cache:
+      - go/load-mod-cache:
           key: "integration"
       - go/mod-download
       - run: go version && go build ./...
-      - go/save-cache:
+      - go/save-mod-cache:
           key: "integration"
       - go/install:
           version: 1.16.4

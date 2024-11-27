@@ -1,9 +1,10 @@
-description: "Load cached Go modules (deprecated)."
+description: "Load cached Go modules."
 parameters:
   key:
     description: "User-configurable component for cache key. Useful for avoiding collisions in complex workflows."
     type: string
     default: ""
 steps:
-  - load-mod-cache:
-      key: << parameters.key >>
+  - restore_cache:
+      keys:
+        - v1-<< parameters.key >>-go-mod-{{ arch }}-{{ checksum "go.sum"  }}

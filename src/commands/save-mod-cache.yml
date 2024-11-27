@@ -10,6 +10,7 @@ parameters:
     # /home/circleci/go is the GOPATH in the cimg/go Docker image
     default: "/home/circleci/go/pkg/mod"
 steps:
-  - save-mod-cache:
-      key: << parameters.key >>
-      path: << parameters.path >>
+  - save_cache:
+      key: v1-<< parameters.key >>-go-mod-{{ arch }}-{{ checksum "go.sum"  }}
+      paths:
+        - << parameters.path >>

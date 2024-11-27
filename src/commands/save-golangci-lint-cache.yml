@@ -1,0 +1,16 @@
+description: "Save golangci-lint cache."
+parameters:
+  key:
+    description: "User-configurable component for cache key. Useful for avoiding collisions in complex workflows."
+    type: string
+    default: ""
+  path:
+    description: "Path to cache."
+    type: string
+    default: "/home/circleci/.cache/golangci-lint"
+steps:
+  - save_cache:
+      key: v1-<< parameters.key >>-golangci-lint-{{ .Environment.CIRCLE_JOB }}-{{ arch }}-{{ checksum "go.sum" }}-{{ epoch | round "72h" }}
+      paths:
+        - << parameters.path >>
+

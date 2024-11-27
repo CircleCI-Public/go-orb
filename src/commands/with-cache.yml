@@ -1,0 +1,56 @@
+description: |
+  Runs the given steps
+parameters:
+  steps:
+    description: "The steps to run with caching."
+    type: steps
+  key:
+    description: "User-configurable component for cache key. Useful for avoiding collisions in complex workflows."
+    type: string
+    default: ""
+  build:
+    description: "Whether to use go-build cache."
+    type: boolean
+    default: true
+  mod:
+    description: |
+      Whether to use go module cache. If most of your dependencies are public, it is faster to use the public
+      Go module proxy, so this defaults to `false`.
+    type: boolean
+    default: false
+  golangci-lint:
+    description: "Whether to use golangci-lint cache. Useful only in steps with linting, so defaults to false."
+    type: boolean
+    default: false
+steps:
+  - when:
+      condition: << parameters.build >>
+      steps:
+        - save-build-cache:
+            key: << parameters.key >>
+  - when:
+      condition: << parameters.mod >>
+      steps:
+        - save-mod-cache:
+            key: << parameters.key >>
+  - when:
+      condition: << parameters.golangci-lint >>
+      steps:
+        - load-golangci-lint-cache:
+            key: << parameters.key >>
+  - steps: << parameters.steps >>
+  - when:
+      condition: << parameters.build >>
+      steps:
+        - save-go-cache:
+            key: << parameters.key >>
+  - when:
+      condition: << parameters.mod >>
+      steps:
+        - save-mod-cache:
+            key: << parameters.key >>
+  - when:
+      condition: << parameters.golangci-lint >>
+      steps:
+        - save-golangci-lint-cache:
+            key: << parameters.key >>
