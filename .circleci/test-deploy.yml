@@ -17,13 +17,13 @@ jobs:
   int-test-goreleaser-install:
     executor:
       name: go/default
-      tag: "1.21.5"
+      tag: "1.23"
     steps:
       - go/install-goreleaser
   int-test-goreleaser-release:
     executor:
       name: go/default
-      tag: "1.21.5"
+      tag: "1.23"
     steps:
       - go/install-goreleaser
       - go/goreleaser-release:
@@ -34,7 +34,7 @@ jobs:
   int-test-cimg-go:
     executor:
       name: go/default
-      tag: "1.13"
+      tag: "1.23"
     steps:
       - run:
           name: "Check out sample project."
@@ -84,7 +84,7 @@ jobs:
           key: "integration"
   int-test-vm-linux:
     machine:
-      image: ubuntu-2004:202104-01
+      image: ubuntu-2004:current
     steps:
       - run:
           name: "Check out sample project."
@@ -99,7 +99,7 @@ jobs:
           key: "integration"
   int-test-vm-arm64:
     machine:
-      image: ubuntu-2204:2023.07.1
+      image: ubuntu-2204:current
     resource_class: arm.medium
     steps:
       - run:
@@ -116,7 +116,7 @@ jobs:
   # test to make sure the dirty cache issue doesn't crop back up
   int-test-dirty-cache:
     machine:
-      image: ubuntu-2004:202104-01
+      image: ubuntu-2004:current
     steps:
       - run:
           name: "Check out sample project."
