@@ -137,6 +137,42 @@ jobs:
       - go/install:
           version: 1.16.4
       - run: go version && go build ./...
+  go-test-default:
+    docker:
+      - image: cimg/go:1.23.3
+    steps:
+      - checkout
+      - go/test:
+          project-path: tests
+  int-test-gotestsum-1-test:
+    docker:
+      - image: cimg/go:1.23.3
+    steps:
+      - checkout
+      - go/gotestsum:
+          project-path: tests
+          packages: circleci.com/go-orb/numbers
+      - store_test_results:
+          path: /home/circleci/project/tests
+  int-test-gotestsum-2-test:
+    docker:
+      - image: cimg/go:1.23.3
+    steps:
+      - checkout
+      - go/gotestsum:
+          project-path: tests
+          packages: circleci.com/go-orb/numbers circleci.com/go-orb/words
+      - store_test_results:
+          path: /home/circleci/project/tests
+  int-test-gotestsum-all-test:
+    docker:
+      - image: cimg/go:1.23.3
+    steps:
+      - checkout
+      - go/gotestsum:
+          project-path: tests
+      - store_test_results:
+          path: /home/circleci/project/tests
 workflows:
   test-deploy:
     jobs:
@@ -163,6 +199,14 @@ workflows:
       - int-test-dirty-cache:
           filters: *filters
       - int-test-vm-arm64:
+          filters: *filters
+      - go-test-default:
+          filters: *filters
+      - int-test-gotestsum-1-test:
+          filters: *filters
+      - int-test-gotestsum-2-test:
+          filters: *filters
+      - int-test-gotestsum-all-test:
           filters: *filters
       - orb-tools/pack:
           filters: *release-filters

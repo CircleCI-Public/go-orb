@@ -1,8 +1,14 @@
 #!/usr/bin/env bash
+
+if [ -n "${ORB_EVAL_PROJECT_PATH}" ]; then
+  cd "${ORB_EVAL_PROJECT_PATH}" || exit
+fi
+
 COVER_PROFILE=$(eval echo "$ORB_EVAL_COVER_PROFILE")
 
 if [ -n "$ORB_VAL_RACE" ]; then
   set -- "$@" -race
+  ORB_VAL_COVER_MODE=atomic
 fi
 
 if [ "$ORB_VAL_FAILFAST" != "false" ]; then
