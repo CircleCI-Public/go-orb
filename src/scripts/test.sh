@@ -1,4 +1,15 @@
 #!/usr/bin/env bash
+if [ "${ORB_VAL_PARALLEL}" = "m" ] || [ "${ORB_VAL_PARALLEL_TESTS}" = "m" ]; then
+  GOMAXPROCS=$(go run max_parallelism/main.go)
+fi
+
+if [ "${ORB_VAL_PARALLEL}" = "m" ]; then
+  ORB_VAL_PARALLEL=$GOMAXPROCS
+fi
+
+if [ "${ORB_VAL_PARALLEL_TESTS}" = "m" ]; then
+  ORB_VAL_PARALLEL_TESTS=$GOMAXPROCS
+fi
 
 if [ -n "${ORB_EVAL_PROJECT_PATH}" ]; then
   cd "${ORB_EVAL_PROJECT_PATH}" || exit
@@ -24,8 +35,9 @@ if [ -n "$ORB_VAL_VERBOSE" ]; then
 fi
 
 set -x
-go test -count="$ORB_VAL_COUNT" -coverprofile="$COVER_PROFILE" \
-    -p "$ORB_VAL_PARALLEL" -covermode="$ORB_VAL_COVER_MODE" \
+go test -count="$ORB_VAL_COUNT" -p "${ORB_VAL_PARALLEL}" \
+    -parallel "${ORB_VAL_PARALLEL_TESTS}" \
+    -coverprofile="$COVER_PROFILE" -covermode="$ORB_VAL_COVER_MODE" \
     "$ORB_VAL_PACKAGES" -coverpkg="$ORB_VAL_PACKAGES" \
     -timeout="$ORB_VAL_TIMEOUT" \
     "$@"
