@@ -35,6 +35,7 @@ parameters:
     type: string
     default: "m"
   parallel-tests:
+    description: |
       Allow parallel execution of test functions that call t.Parallel.
       The value of this flag is the maximum number of tests to run
       simultaneously.
