@@ -29,11 +29,18 @@ parameters:
     default: "10m"
   parallel:
     description: |
+      The number of programs, such as build commands or
+      test binaries, that can be run in parallel.
+      The default is GOMAXPROCS, normally the number of CPUs available.
+    type: string
+    default: "m"
+  parallel-tests:
       Allow parallel execution of test functions that call t.Parallel.
       The value of this flag is the maximum number of tests to run
-      simultaneously
+      simultaneously.
+      By default, -parallel is set to the value of GOMAXPROCS.
     type: string
-    default: "1"
+    default: "m"
   coverprofile:
     description: file to save coverage profile
     type: string
@@ -76,6 +83,7 @@ steps:
         ORB_VAL_SHORT: <<parameters.short>>
         ORB_VAL_TIMEOUT: <<parameters.timeout>>
         ORB_VAL_PARALLEL: <<parameters.parallel>>
+        ORB_VAL_PARALLEL_TESTS: <<parameters.parallel-tests>>
         ORB_VAL_COVER_MODE: <<parameters.covermode>>
         ORB_VAL_VERBOSE: <<parameters.verbose>>
         ORB_VAL_PACKAGES: <<parameters.packages>>
