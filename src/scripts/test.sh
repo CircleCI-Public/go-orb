@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-if [ "${ORB_VAL_PARALLEL}" = "m" -o "${ORB_VAL_PARALLEL_TESTS}" = "m" ]; then
+if [ "${ORB_VAL_PARALLEL}" = "m" ] || [ "${ORB_VAL_PARALLEL_TESTS}" = "m" ]; then
   GOMAXPROCS=$(go run max_parallelism/main.go)
 fi
 
