@@ -144,6 +144,13 @@ jobs:
       - checkout
       - go/test:
           project-path: tests
+  go-test-default-1-19:
+    docker:
+      - image: cimg/go:1.19
+    steps:
+      - checkout
+      - go/test:
+          project-path: tests
   int-test-gotestsum-1-test:
     docker:
       - image: cimg/go:1.23.3
@@ -201,6 +208,8 @@ workflows:
       - int-test-vm-arm64:
           filters: *filters
       - go-test-default:
+          filters: *filters
+      - go-test-default-1-19:
           filters: *filters
       - int-test-gotestsum-1-test:
           filters: *filters
