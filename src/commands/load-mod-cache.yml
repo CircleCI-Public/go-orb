@@ -4,7 +4,13 @@ parameters:
     description: "User-configurable component for cache key. Useful for avoiding collisions in complex workflows."
     type: string
     default: ""
+  project-path:
+    description: |
+      The path to the directory containing your Go project files: go.mod, go.sum.
+      Defaults to $CIRCLE_WORKING_DIRECTORY.
+    type: string
+    default: $CIRCLE_WORKING_DIRECTORY
 steps:
   - restore_cache:
       keys:
-        - v1-<< parameters.key >>-go-mod-{{ arch }}-{{ checksum "go.sum" }}
+        - v1-<< parameters.key >>-go-mod-{{ arch }}-{{ checksum "<< parameters.project-path >>/go.sum" }}
