@@ -8,9 +8,14 @@ parameters:
     description: "Path to cache."
     type: string
     default: "/home/circleci/.cache/golangci-lint"
+  project-path:
+    description: |
+      The path to the directory containing your Go project files: go.mod, go.sum.
+      Defaults to $CIRCLE_WORKING_DIRECTORY.
+    type: string
+    default: $CIRCLE_WORKING_DIRECTORY
 steps:
   - save_cache:
-      key: v1-<< parameters.key >>-golangci-lint-{{ .Environment.CIRCLE_JOB }}-{{ arch }}-{{ checksum "go.sum" }}-{{ epoch | round "72h" }}
+      key: v1-<< parameters.key >>-golangci-lint-{{ .Environment.CIRCLE_JOB }}-{{ arch }}-{{ checksum "<< parameters.project-path >>/go.sum" }}-{{ epoch | round "72h" }}
       paths:
         - << parameters.path >>
-
