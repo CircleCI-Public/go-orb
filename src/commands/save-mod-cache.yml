@@ -9,8 +9,14 @@ parameters:
     type: string
     # /home/circleci/go is the GOPATH in the cimg/go Docker image
     default: "/home/circleci/go/pkg/mod"
+  project-path:
+    description: |
+      The path to the directory containing your Go project files: go.mod, go.sum.
+      Defaults to $CIRCLE_WORKING_DIRECTORY.
+    type: string
+    default: $CIRCLE_WORKING_DIRECTORY
 steps:
   - save_cache:
-      key: v1-<< parameters.key >>-go-mod-{{ arch }}-{{ checksum "go.sum" }}
+      key: v1-<< parameters.key >>-go-mod-{{ arch }}-{{ checksum "<< parameters.project-path >>/go.sum" }}
       paths:
         - << parameters.path >>
