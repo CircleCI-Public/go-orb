@@ -106,6 +106,7 @@ steps:
         ORB_VAL_RUN: <<parameters.run>>
         ORB_EVAL_COVER_PROFILE: <<parameters.coverprofile>>
         ORB_EVAL_PROJECT_PATH: <<parameters.project-path>>
+        MAX_PARALLELISM_GO_CONTENTS: <<include(max_parallelism/main.go)>>
       command: <<include(scripts/test.sh)>>
       name: "go test"
       no_output_timeout: <<parameters.no_output_timeout>>

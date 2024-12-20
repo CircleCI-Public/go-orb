@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
 if [ "${ORB_VAL_PARALLEL}" = "m" ] || [ "${ORB_VAL_PARALLEL_TESTS}" = "m" ]; then
-  GOMAXPROCS=$(go run max_parallelism/main.go)
+  mkdir -p /tmp/go-orb/max_parallelism/
+  echo  "$MAX_PARALLELISM_GO_CONTENTS" > /tmp/go-orb/max_parallelism/main.go
+  GOMAXPROCS=$(go run /tmp/go-orb/max_parallelism/main.go)
+  rm -rf /tmp/go-orb
 fi
 
 if [ "${ORB_VAL_PARALLEL}" = "m" ]; then
