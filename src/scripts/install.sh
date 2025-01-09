@@ -22,7 +22,8 @@ fi
 
 # Checking if Alpine is being used to update the tar options
 echo "Installing the requested version of Go."
-if [ "$(grep -q 'Alpine Linux' /etc/os-release)" ]; then
+grep 'Alpine Linux' /etc/os-release
+if [ "$?" ]; then
   curl --fail --location -sS "https://dl.google.com/go/go${ORB_VAL_VERSION}.${OSD_FAMILY}-${HOSTTYPE}.tar.gz" |
     $SUDO tar -o --strip-components=1 -z -x -C /usr/local/go/
 else
