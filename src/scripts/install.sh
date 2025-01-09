@@ -22,7 +22,7 @@ fi
 
 # Checking if Alpine is being used to update the tar options
 TAR_OPTIONS="--no-same-owner --strip-components=1 --gunzip -x -C"
-if [[ $(cat /etc/os-release | grep '^NAME=' | cut -d'=' -f2) = "Alpine Linux" ]]; then
+if [[ $(grep '^NAME=' /etc/os-release | cut -d'=' -f2) = "Alpine Linux" ]]; then
   TAR_OPTIONS="-o --strip-components=1 -z -x -C"
 fi
 
