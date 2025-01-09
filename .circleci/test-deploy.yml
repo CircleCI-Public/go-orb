@@ -74,6 +74,7 @@ jobs:
     docker:
       - image: alpine:latest
     steps:
+      - run: apk add curl
       - go/install:
           version: 1.17.2
       - run:
