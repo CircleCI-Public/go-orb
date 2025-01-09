@@ -28,7 +28,7 @@ fi
 
 echo "Installing the requested version of Go."
 curl --fail --location -sS "https://dl.google.com/go/go${ORB_VAL_VERSION}.${OSD_FAMILY}-${HOSTTYPE}.tar.gz" |
-  $SUDO tar "${TAR_OPTIONS}" /usr/local/go/
+  $SUDO tar ${TAR_OPTIONS} /usr/local/go/
 
 #shellcheck disable=SC2016
 echo 'export PATH=$PATH:/usr/local/go/bin' >>"$BASH_ENV"
