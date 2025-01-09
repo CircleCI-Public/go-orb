@@ -70,6 +70,15 @@ jobs:
       - run:
           name: "Check if the correct python version is accessible & installed"
           command: python --version | grep -q "^Python 3.11"
+  int-test-alpine:
+    docker:
+      - image: alpine:latest
+    steps:
+      - go/install:
+          version: 1.17.2
+      - run:
+          name: "Check if the correct python version is accessible & installed"
+          command: python --version | grep -q "^Python 3.11"
   int-test-macos-executor:
     macos:
       xcode: "14.1.0"
@@ -192,6 +201,8 @@ workflows:
           filters: *filters
       - int-test-cimg-python:
           filters: *filters
+      - int-test-alpine:
+          filters: *filters
       - int-test-macos-executor:
           filters: *filters
       - int-test-vm-linux:
@@ -220,6 +231,7 @@ workflows:
             - int-test-cimg-go
             - int-test-cimg-base
             - int-test-cimg-python
+            - int-test-alpine
             - int-test-macos-executor
             - int-test-vm-linux
             - int-test-dirty-cache
