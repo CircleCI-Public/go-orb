@@ -22,14 +22,11 @@ fi
 
 # Checking if Alpine is being used to update the tar options
 echo "Installing the requested version of Go."
-if grep -q 'Alpine Linux' /etc/os-release; then
-  curl --fail --location -sS "https://dl.google.com/go/go${ORB_VAL_VERSION}.${OSD_FAMILY}-${HOSTTYPE}.tar.gz" |
-    $SUDO tar -o --strip-components=1 -z -x -C /usr/local/go/
-else
-  curl --fail --location -sS "https://dl.google.com/go/go${ORB_VAL_VERSION}.${OSD_FAMILY}-${HOSTTYPE}.tar.gz" |
-    $SUDO tar --no-same-owner --strip-components=1 --gunzip -x -C /usr/local/go/
-fi
+curl -O --fail --location -sS "https://dl.google.com/go/go${ORB_VAL_VERSION}.${OSD_FAMILY}-${HOSTTYPE}.tar.gz"
+$SUDO tar xzf go${ORB_VAL_VERSION}.${OSD_FAMILY}-${HOSTTYPE}.tar.gz -C /opt/go
+rm go${ORB_VAL_VERSION}.${OSD_FAMILY}-${HOSTTYPE}.tar.gz
+ln -s /opt/go/bin/go /usr/local/bin/go
+ln -s /opt/go/bin/gofmt /usr/local/bin/gofmt
 
 #shellcheck disable=SC2016
-echo 'export PATH=$PATH:/usr/local/go/bin' >>"$BASH_ENV"
-$SUDO chown -R "$(whoami)": /usr/local/go
+$SUDO chown -R "$(whoami)": /usr/local/bin/go /usr/local/bin/gofmt
