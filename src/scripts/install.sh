@@ -23,7 +23,7 @@ fi
 # Checking if Alpine is being used to update the tar options
 echo "Installing the requested version of Go."
 curl -O --fail --location -sS "https://dl.google.com/go/go${ORB_VAL_VERSION}.${OSD_FAMILY}-${HOSTTYPE}.tar.gz"
-$SUDO tar xzf "go${ORB_VAL_VERSION}.${OSD_FAMILY}-${HOSTTYPE}.tar.gz" -C /opt/go
+$SUDO tar xzf "go${ORB_VAL_VERSION}.${OSD_FAMILY}-${HOSTTYPE}.tar.gz" -C /opt
 rm "go${ORB_VAL_VERSION}.${OSD_FAMILY}-${HOSTTYPE}.tar.gz"
 ln -s /opt/go/bin/go /usr/local/bin/go
 ln -s /opt/go/bin/gofmt /usr/local/bin/gofmt
