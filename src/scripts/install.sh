@@ -9,8 +9,8 @@ function alpine_install {
   cd "go${ORB_VAL_VERSION}/src" || exit 201
   ./make.bash
   apk del go
-  ln -s "/opt/go${ORB_VAL_VERSION}/bin/go" /usr/local/bin/go
-  ln -s "/opt/go${ORB_VAL_VERSION}/bin/gofmt" /usr/local/bin/gofmt
+  ln -sf "/opt/go${ORB_VAL_VERSION}/bin/go" /usr/local/bin/go
+  ln -sf "/opt/go${ORB_VAL_VERSION}/bin/gofmt" /usr/local/bin/gofmt
 }
 
 function standard_install {
@@ -32,8 +32,8 @@ function standard_install {
   curl -O --fail --location -sS "https://dl.google.com/go/go${ORB_VAL_VERSION}.${OSD_FAMILY}-${HOSTTYPE}.tar.gz"
   $SUDO tar xzf "go${ORB_VAL_VERSION}.${OSD_FAMILY}-${HOSTTYPE}.tar.gz" -C /opt
   $SUDO rm "go${ORB_VAL_VERSION}.${OSD_FAMILY}-${HOSTTYPE}.tar.gz"
-  $SUDO ln -s /opt/go/bin/go /usr/local/bin/go
-  $SUDO ln -s /opt/go/bin/gofmt /usr/local/bin/gofmt
+  $SUDO ln -sf /opt/go/bin/go /usr/local/bin/go
+  $SUDO ln -sf /opt/go/bin/gofmt /usr/local/bin/gofmt
 
   #shellcheck disable=SC2016
   $SUDO chown -R "$(whoami)": /usr/local/bin/go /usr/local/bin/gofmt
