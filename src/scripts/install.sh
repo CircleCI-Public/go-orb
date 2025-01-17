@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
 
 function alpine_install {
-  cd /opt
+  cd /opt || exit 200
   apk add bash gcc musl-dev go
   wget "https://go.dev/dl/go${ORB_VAL_VERSION}.src.tar.gz"
   tar xzf "go${ORB_VAL_VERSION}.src.tar.gz"
   mv go "go${ORB_VAL_VERSION}"
-  cd "go${ORB_VAL_VERSION}/src"
+  cd "go${ORB_VAL_VERSION}/src" || exit 201
   ./make.bash
   apk del go
   ln -s "/opt/go${ORB_VAL_VERSION}/bin/go" /usr/local/bin/go
