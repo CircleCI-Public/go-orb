@@ -78,8 +78,8 @@ jobs:
       - go/install:
           version: 1.17.2
       - run:
-          name: "Check if the correct python version is accessible & installed"
-          command: python --version | grep -q "^Python 3.11"
+          name: "Check if the correct go version is accessible & installed"
+          command: go version | grep -q "1.17.2"
   int-test-macos-executor:
     macos:
       xcode: "14.1.0"
