@@ -45,8 +45,7 @@ if [ "${HOSTTYPE}" = "x86_64" ]; then HOSTTYPE="amd64"; fi
 if [ "${HOSTTYPE}" = "aarch64" ]; then HOSTTYPE="arm64"; fi
 case "${HOSTTYPE}" in *86) HOSTTYPE=i386 ;; esac
 
-grep alpinelinux /etc/os-release
-if [ $? -eq 0 ]; then
+if [ grep alpinelinux /etc/os-release ]; then
   alpine_install
 else
   standard_install
