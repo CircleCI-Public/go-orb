@@ -26,6 +26,7 @@ function standard_install {
 
     $SUDO rm -rf /usr/local/go
     $SUDO install --owner="${USER}" -d /usr/local/go
+    $SUDO rm -rf /opt/go
   fi
 
   echo "Installing the requested version of Go."
