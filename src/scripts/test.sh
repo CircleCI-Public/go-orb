@@ -20,20 +20,20 @@ fi
 
 COVER_PROFILE=$(eval echo "$ORB_EVAL_COVER_PROFILE")
 
-if [ "$ORB_VAL_RACE" != "false" ]; then
+if [ "$ORB_VAL_RACE" -eq 1 ]; then
   set -- "$@" -race
   ORB_VAL_COVER_MODE=atomic
 fi
 
-if [ "$ORB_VAL_FAILFAST" != "false" ]; then
+if [ "$ORB_VAL_FAILFAST" -eq 1 ]; then
   set -- "$@" -failfast
 fi
 
-if [ "$ORB_VAL_SHORT" != "false" ]; then
+if [ "$ORB_VAL_SHORT" -eq 1 ]; then
   set -- "$@" -short
 fi
 
-if [ "$ORB_VAL_VERBOSE" != "false" ]; then
+if [ "$ORB_VAL_VERBOSE" -eq 1 ]; then
   set -- "$@" -v
 fi
 
