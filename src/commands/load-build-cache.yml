@@ -4,20 +4,21 @@ parameters:
     description: "User-configurable component for cache key. Useful for avoiding collisions in complex workflows."
     type: string
     default: ""
-  keys:
-    description: "User-configurable component for cache keys. Useful for avoiding collisions in complex workflows."
-    type: enum
-    default: nil
+  use_branch:
+    description: "Flag to support branch name in cache."
+    type: bool
+    default: false
 
 steps:
   - when:
-      condition: << parameters.key >>
+      condition: << parameters.use_branch >>
       steps:
         - restore_cache:
             keys:
               - v1-<< parameters.key >>-go-build-{{ .Environment.CIRCLE_JOB }}-{{ arch }}-{{ checksum "go.sum" }}-{{ epoch | round "72h" }}
-  - when:
-      condition: << parameters.keys >>
+  - unless:
+      condition: << parameters.use_branch >>
       steps:
         - restore_cache:
-            keys: << parameters.keys >>
+            keys:
+              - v1-<< parameters.key >>-go-build-{{ .Environment.CIRCLE_JOB }}-{{ arch }}-{{ .Branch }}-{{ checksum "go.sum" }}-{{ epoch | round "72h" }}
