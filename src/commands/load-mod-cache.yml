@@ -4,7 +4,19 @@ parameters:
     description: "User-configurable component for cache key. Useful for avoiding collisions in complex workflows."
     type: string
     default: ""
+  keys:
+    description: "User-configurable component for cache keys. Useful for avoiding collisions in complex workflows."
+    type: enum
+    default: []
 steps:
-  - restore_cache:
-      keys:
-        - v1-<< parameters.key >>-go-mod-{{ arch }}-{{ checksum "go.sum" }}
+  - when:
+      condition: << parameters.key >>
+      steps:
+        - restore_cache:
+            keys:
+              - v1-<< parameters.key >>-go-mod-{{ arch }}-{{ checksum "go.sum" }}
+  - when:
+      condition: << parameters.keys >>
+      steps:
+        - restore_cache:
+            keys: << parameters.keys >>
