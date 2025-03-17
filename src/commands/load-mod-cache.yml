@@ -6,7 +6,7 @@ parameters:
     default: ""
   use_branch:
     description: "Flag to support branch name in cache."
-    type: bool
+    type: boolean
     default: false
    
 steps:
