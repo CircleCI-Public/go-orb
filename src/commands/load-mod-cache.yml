@@ -8,7 +8,7 @@ parameters:
     description: "Flag to support branch name in cache."
     type: boolean
     default: false
-   
+
 steps:
   - when:
       condition: << parameters.use_branch >>

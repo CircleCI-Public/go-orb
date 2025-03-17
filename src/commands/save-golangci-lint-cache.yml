@@ -13,4 +13,3 @@ steps:
       key: v1-<< parameters.key >>-golangci-lint-{{ .Environment.CIRCLE_JOB }}-{{ arch }}-{{ checksum "go.sum" }}-{{ epoch | round "72h" }}
       paths:
         - << parameters.path >>
-
