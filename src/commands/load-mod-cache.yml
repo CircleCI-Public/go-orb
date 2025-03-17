@@ -7,6 +7,8 @@ parameters:
   keys:
     description: "User-configurable component for cache keys. Useful for avoiding collisions in complex workflows."
     type: enum
+    default: ""
+
 steps:
   - when:
       condition: << parameters.key >>
