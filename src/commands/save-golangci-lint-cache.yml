@@ -7,7 +7,7 @@ parameters:
   path:
     description: "Path to cache."
     type: string
-    default: "/home/circleci/.cache/golangci-lint"
+    default: ~/.cache/golangci-lint
 steps:
   - save_cache:
       key: v1-<< parameters.key >>-golangci-lint-{{ .Environment.CIRCLE_JOB }}-{{ arch }}-{{ checksum "go.sum" }}-{{ epoch | round "72h" }}
