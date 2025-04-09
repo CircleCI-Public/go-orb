@@ -13,13 +13,79 @@ release-filters: &release-filters
   tags:
     only: /^v[0-9]+\.[0-9]+\.[0-9]+$/
 
+executors:
+  alpine:
+    resource_class: medium
+    docker:
+      - image: alpine:latest
+  go:
+    resource_class: medium
+    docker:
+      - image: cimg/go:1.23
+  go_arm:
+    resource_class: arm.medium
+    docker:
+      - image: cimg/go:1.23
+  mac:
+    resource_class: m2pro.medium
+    macos:
+      xcode: "16.2.0"
+  ubuntu_machine:
+    resource_class: medium
+    machine:
+      image: ubuntu-2204:current
+  ubuntu_machine_arm:
+    resource_class: arm.medium
+    machine:
+      image: ubuntu-2204:current
+  win2022_bash:
+    resource_class: windows.medium
+    machine:
+      image: windows-server-2022-gui:2024.12.1
+      shell: bash.exe
+  win2022_cmd:
+    resource_class: windows.medium
+    machine:
+      image: windows-server-2022-gui:2024.12.1
+      shell: cmd.exe
+  win2022_powershell:
+    resource_class: windows.medium
+    machine:
+      image: windows-server-2022-gui:2024.12.1
+      shell: powershell.exe
+
+commands:
+  alpine_install_curl:
+    steps:
+      - run:
+          name: Alpine install curl
+          command: apk add --no-cache curl
+
 jobs:
   int-test-goreleaser-install:
-    executor:
-      name: go/default
-      tag: "1.23"
+    executor: << parameters.executor >>
+    parameters:
+      executor:
+        type: executor
     steps:
       - go/install-goreleaser
+      - run:
+          name: Goreleaser version (testing path)
+          command: goreleaser --version
+  int-test-goreleaser-install-alpine:
+    executor: alpine
+    steps:
+      - alpine_install_curl
+      - go/install-goreleaser:
+          shell: sh
+  int-test-goreleaser-install-pinned-version:
+    executor: ubuntu_machine
+    steps:
+      - go/install-goreleaser:
+          version: v1.26.2
+      - run:
+          name: Goreleaser version check
+          command: goreleaser --version | grep "1.26.2"
   int-test-goreleaser-release:
     executor:
       name: go/default
@@ -71,18 +137,16 @@ jobs:
           name: "Check if the correct python version is accessible & installed"
           command: python --version | grep -q "^Python 3.11"
   int-test-alpine:
-    docker:
-      - image: alpine:latest
+    executor: alpine
     steps:
-      - run: apk add curl
+      - alpine_install_curl
       - go/install:
           version: 1.17.2
       - run:
           name: "Check if the correct go version is accessible & installed"
           command: go version | grep -q "1.17.2"
   int-test-macos-executor:
-    macos:
-      xcode: "14.1.0"
+    executor: mac
     steps:
       - run:
           name: "Check out sample project."
@@ -96,8 +160,7 @@ jobs:
             - go/mod-download
             - run: go version && go build ./...
   int-test-vm-linux:
-    machine:
-      image: ubuntu-2004:current
+    executor: ubuntu_machine
     steps:
       - run:
           name: "Check out sample project."
@@ -112,9 +175,7 @@ jobs:
             - go/mod-download
             - run: go version && go build ./...
   int-test-vm-arm64:
-    machine:
-      image: ubuntu-2204:current
-    resource_class: arm.medium
+    executor: ubuntu_machine_arm
     steps:
       - run:
           name: "Check out sample project."
@@ -130,8 +191,7 @@ jobs:
             - run: go version && go build ./...
   # test to make sure the dirty cache issue doesn't crop back up
   int-test-dirty-cache:
-    machine:
-      image: ubuntu-2004:current
+    executor: ubuntu_machine
     steps:
       - run:
           name: "Check out sample project."
@@ -148,6 +208,9 @@ jobs:
           version: 1.16.4
       - run: go version && go build ./...
   go-test-default:
+    executor:
+      name: go/default
+      tag: "1.23"
     docker:
       - image: cimg/go:1.23.3
     steps:
@@ -165,8 +228,9 @@ jobs:
       - store_test_results:
           path: /home/circleci/project/tests
   int-test-gotestsum-2-test:
-    docker:
-      - image: cimg/go:1.23.3
+    executor:
+      name: go/default
+      tag: "1.23"
     steps:
       - checkout
       - go/gotestsum:
@@ -188,6 +252,15 @@ workflows:
     jobs:
       # Make sure to include "filters: *filters" in every test job you want to run as part of your deployment.
       - int-test-goreleaser-install:
+          name: int-test-goreleaser-install-<< matrix.executor >>
+          filters: *filters
+          matrix:
+            alias: int-test-goreleaser-install
+            parameters:
+              executor: [go, go_arm, mac, ubuntu_machine, ubuntu_machine_arm, win2022_bash, win2022_cmd, win2022_powershell]
+      - int-test-goreleaser-install-alpine:
+          filters: *filters
+      - int-test-goreleaser-install-pinned-version:
           filters: *filters
       - int-test-goreleaser-release:
           pre-steps:
@@ -238,6 +311,8 @@ workflows:
             - int-test-dirty-cache
             - int-test-vm-arm64
             - int-test-goreleaser-install
+            - int-test-goreleaser-install-alpine
+            - int-test-goreleaser-install-pinned-version
             - int-test-goreleaser-release
           context: orb-publisher
           filters: *release-filters

@@ -1,17 +1,23 @@
-description: |
-  GoReleaser is a release automation tool for managing Go projects.
-  Install GoReleaser in your build. Golang must be installed.
+---
+description: >
+  Install goreleaser
 
 parameters:
-  version:
-    description: The GoReleaser version to install. Defaults to latest
+  shell:
     type: string
-    default: "latest"
+    default: "bash"
+    description: >
+      The shell to use for running the script, windows should be bash but alpine may be sh.
+  version:
+    type: string
+    default: ""
+    description: >
+      The version of goreleaser to install. If not specified, the latest version will be installed.
 
 steps:
   - run:
-      name: "Installing GoReleaser"
+      name: Install goreleaser
       environment:
         GO_STR_VERSION: << parameters.version >>
       command: << include(scripts/install-goreleaser.sh) >>
-
+      shell: << parameters.shell >>
