@@ -2,6 +2,10 @@
 
 set -euo pipefail
 
+function alpine_install_curl() {
+  apk add curl
+}
+
 function get_os() {
   local os
   os=$(uname -o)
@@ -72,6 +76,15 @@ extract_goreleaser() {
     extract_goreleaser_nix
   fi
 }
+
+if grep alpinelinux /etc/os-release; then
+  if which curl; then
+    echo curl found in alpine
+  else
+    echo Installing curl in alpine
+    alpine_install_curl
+  fi
+fi
 
 if ! which goreleaser &>/dev/null; then
   echo "Installing goreleaser..."

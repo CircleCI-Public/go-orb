@@ -78,6 +78,11 @@ jobs:
       - alpine_install_curl
       - go/install-goreleaser:
           shell: sh
+  int-test-goreleaser-install-alpine-no-curl:
+    executor: alpine
+    steps:
+      - go/install-goreleaser:
+          shell: sh
   int-test-goreleaser-install-pinned-version:
     executor: ubuntu_machine
     steps:
@@ -260,6 +265,8 @@ workflows:
               executor: [go, go_arm, mac, ubuntu_machine, ubuntu_machine_arm, win2022_bash, win2022_cmd, win2022_powershell]
       - int-test-goreleaser-install-alpine:
           filters: *filters
+      - int-test-goreleaser-install-alpine-no-curl:
+          filters: *filters
       - int-test-goreleaser-install-pinned-version:
           filters: *filters
       - int-test-goreleaser-release:
@@ -312,6 +319,7 @@ workflows:
             - int-test-vm-arm64
             - int-test-goreleaser-install
             - int-test-goreleaser-install-alpine
+            - int-test-goreleaser-install-alpine-no-curl
             - int-test-goreleaser-install-pinned-version
             - int-test-goreleaser-release
           context: orb-publisher
