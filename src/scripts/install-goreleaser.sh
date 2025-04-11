@@ -78,7 +78,12 @@ extract_goreleaser() {
 }
 
 if grep alpinelinux /etc/os-release; then
-  alpine_install_curl
+  if which curl; then
+    echo curl found in alpine
+  else
+    echo Installing curl in alpine
+    alpine_install_curl
+  fi
 fi
 
 if ! which goreleaser &>/dev/null; then
