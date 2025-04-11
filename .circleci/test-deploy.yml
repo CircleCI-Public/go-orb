@@ -78,6 +78,11 @@ jobs:
       - alpine_install_curl
       - go/install-goreleaser:
           shell: sh
+  int-test-goreleaser-install-alpine-no-curl:
+    executor: alpine
+    steps:
+      - go/install-goreleaser:
+          shell: sh
   int-test-goreleaser-install-pinned-version:
     executor: ubuntu_machine
     steps:
@@ -140,14 +145,6 @@ jobs:
     executor: alpine
     steps:
       - alpine_install_curl
-      - go/install:
-          version: 1.17.2
-      - run:
-          name: "Check if the correct go version is accessible & installed"
-          command: go version | grep -q "1.17.2"
-  int-test-alpine-no-curl:
-    executor: alpine
-    steps:
       - go/install:
           version: 1.17.2
       - run:
@@ -268,6 +265,8 @@ workflows:
               executor: [go, go_arm, mac, ubuntu_machine, ubuntu_machine_arm, win2022_bash, win2022_cmd, win2022_powershell]
       - int-test-goreleaser-install-alpine:
           filters: *filters
+      - int-test-goreleaser-install-alpine-no-curl:
+          filters: *filters
       - int-test-goreleaser-install-pinned-version:
           filters: *filters
       - int-test-goreleaser-release:
@@ -284,8 +283,6 @@ workflows:
       - int-test-cimg-python:
           filters: *filters
       - int-test-alpine:
-          filters: *filters
-      - int-test-alpine-no-curl:
           filters: *filters
       - int-test-macos-executor:
           filters: *filters
@@ -316,13 +313,13 @@ workflows:
             - int-test-cimg-base
             - int-test-cimg-python
             - int-test-alpine
-            - int-test-alpine-no-curl
             - int-test-macos-executor
             - int-test-vm-linux
             - int-test-dirty-cache
             - int-test-vm-arm64
             - int-test-goreleaser-install
             - int-test-goreleaser-install-alpine
+            - int-test-goreleaser-install-alpine-no-curl
             - int-test-goreleaser-install-pinned-version
             - int-test-goreleaser-release
           context: orb-publisher
