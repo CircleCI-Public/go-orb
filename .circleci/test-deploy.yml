@@ -145,6 +145,14 @@ jobs:
       - run:
           name: "Check if the correct go version is accessible & installed"
           command: go version | grep -q "1.17.2"
+  int-test-alpine-no-curl:
+    executor: alpine
+    steps:
+      - go/install:
+          version: 1.17.2
+      - run:
+          name: "Check if the correct go version is accessible & installed"
+          command: go version | grep -q "1.17.2"
   int-test-macos-executor:
     executor: mac
     steps:
@@ -277,6 +285,8 @@ workflows:
           filters: *filters
       - int-test-alpine:
           filters: *filters
+      - int-test-alpine-no-curl:
+          filters: *filters
       - int-test-macos-executor:
           filters: *filters
       - int-test-vm-linux:
@@ -306,6 +316,7 @@ workflows:
             - int-test-cimg-base
             - int-test-cimg-python
             - int-test-alpine
+            - int-test-alpine-no-curl
             - int-test-macos-executor
             - int-test-vm-linux
             - int-test-dirty-cache
