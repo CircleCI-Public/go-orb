@@ -8,9 +8,12 @@ parameters:
     description: "Path to cache."
     type: string
     default: ~/.cache/golangci-lint
+  checksum:
+    description: "Checksum template instruction"
+    type: string
+    default: '{{ checksum "go.sum" }}'
 steps:
   - save_cache:
-      key: v1-<< parameters.key >>-golangci-lint-{{ .Environment.CIRCLE_JOB }}-{{ arch }}-{{ checksum "go.sum" }}-{{ epoch | round "72h" }}
+      key: v1-<< parameters.key >>-golangci-lint-{{ .Environment.CIRCLE_JOB }}-{{ arch }}-<< parameters.checksum >>-{{ epoch | round "72h" }}
       paths:
         - << parameters.path >>
-

@@ -34,38 +34,48 @@ parameters:
     description: "Location of golangci-lint cache."
     type: string
     default: ~/.cache/golangci-lint
+  checksum:
+    description: "Checksum template instruction"
+    type: string
+    default: '{{ checksum "go.sum" }}'
 steps:
   - when:
       condition: << parameters.build >>
       steps:
         - load-build-cache:
-            key: << parameters.key >>
+            key: '<< parameters.key >>'
+            checksum: '<< parameters.checksum >>'
   - when:
       condition: << parameters.mod >>
       steps:
         - load-mod-cache:
-            key: << parameters.key >>
+            key: '<< parameters.key >>'
+            checksum: '<< parameters.checksum >>'
   - when:
       condition: << parameters.golangci-lint >>
       steps:
         - load-golangci-lint-cache:
-            key: << parameters.key >>
+            key: '<< parameters.key >>'
+            checksum: '<< parameters.checksum >>'
   - steps: << parameters.steps >>
   - when:
       condition: << parameters.build >>
       steps:
         - save-build-cache:
-            key: << parameters.key >>
-            path: << parameters.build-path >>
+            key: '<< parameters.key >>'
+            checksum: '<< parameters.checksum >>'
+            path: '<< parameters.build-path >>'
   - when:
       condition: << parameters.mod >>
       steps:
         - save-mod-cache:
-            key: << parameters.key >>
-            path: << parameters.mod-path >>
+            key: '<< parameters.key >>'
+            checksum: '<< parameters.key >>'
+            path: '<< parameters.mod-path >>'
   - when:
       condition: << parameters.golangci-lint >>
       steps:
         - save-golangci-lint-cache:
-            key: << parameters.key >>
-            path: << parameters.golangci-lint-path >>
+            key: '<< parameters.key >>'
+            checksum: '<< parameters.checksum >>'
+            path: '<< parameters.golangci-lint-path >>'

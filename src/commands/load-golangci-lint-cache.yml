@@ -4,7 +4,11 @@ parameters:
     description: "User-configurable component for cache key. Useful for avoiding collisions in complex workflows."
     type: string
     default: ""
+  checksum:
+    description: "Checksum template instruction"
+    type: string
+    default: '{{ checksum "go.sum" }}'
 steps:
   - restore_cache:
       keys:
-        - v1-<< parameters.key >>-golangci-lint-{{ .Environment.CIRCLE_JOB }}-{{ arch }}-{{ checksum "go.sum" }}-{{ epoch | round "72h" }}
+        - v1-<< parameters.key >>-golangci-lint-{{ .Environment.CIRCLE_JOB }}-{{ arch }}-<< parameters.checksum >>-{{ epoch | round "72h" }}
