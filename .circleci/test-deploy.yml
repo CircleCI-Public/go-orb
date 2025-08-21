@@ -114,6 +114,7 @@ jobs:
           key: "integration"
           mod: true
           golangci-lint: true
+          checksum: '{{ checksum "go.mod" }}-{{ checksum "go.sum" }}'
           steps:
             - go/mod-download
             - run: go version && go build ./...
