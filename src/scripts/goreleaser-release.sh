@@ -1,6 +1,6 @@
 #!/bin/bash
 
-GITHUB_TOKEN="$(echo "\$$GITHUB_TOKEN" | circleci env subst)"
+GITHUB_TOKEN="$(echo "\$$GO_ENV_VAR_NAME_GITHUB_TOKEN" | circleci env subst)"
 GO_EVAL_PROJECT_PATH="$(eval echo "${GO_EVAL_PROJECT_PATH}")"
 
 # Change to directory containing project files

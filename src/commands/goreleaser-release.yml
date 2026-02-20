@@ -30,7 +30,7 @@ steps:
   - run:
       name: "Build and release Go Binaries to GitHub with GoReleaser"
       environment:
-        GITHUB_TOKEN: << parameters.github-token >>
+        GO_ENV_VAR_NAME_GITHUB_TOKEN: << parameters.github-token >>
         GO_BOOL_VALIDATE_YAML: << parameters.validate-yaml >>
         GO_BOOL_PUBLISH_RELEASE: << parameters.publish-release >>
         GO_EVAL_PROJECT_PATH: << parameters.project-path >>
