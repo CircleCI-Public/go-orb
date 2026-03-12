@@ -2,6 +2,27 @@
 
 set -euo pipefail
 
+RETRY_ATTEMPTS=3
+RETRY_DELAY=5
+
+function retry {
+  local attempt=1
+  while [ "$attempt" -le "$RETRY_ATTEMPTS" ]; do
+    echo "Attempt $attempt of $RETRY_ATTEMPTS: $*" >&2
+    if "$@"; then
+      return 0
+    fi
+    echo "Attempt $attempt failed." >&2
+    attempt=$((attempt + 1))
+    if [ "$attempt" -le "$RETRY_ATTEMPTS" ]; then
+      echo "Retrying in ${RETRY_DELAY} seconds..." >&2
+      sleep "$RETRY_DELAY"
+    fi
+  done
+  echo "All $RETRY_ATTEMPTS attempts failed." >&2
+  return 1
+}
+
 function alpine_install_curl() {
   apk add curl
 }
@@ -37,11 +58,11 @@ download_goreleaser() {
   fi
   if [ -z "${GO_STR_VERSION:-}" ]; then
     # Taken from https://goreleaser.com/install/#bash-script
-    GO_STR_VERSION="$(curl -sf https://goreleaser.com/static/latest)"
+    GO_STR_VERSION="$(retry curl -sf --connect-timeout 30 --max-time 30 https://goreleaser.com/static/latest)"
   fi
   URL="https://github.com/goreleaser/goreleaser/releases/download/${GO_STR_VERSION}/goreleaser_${os}_${architecture}.${file_extension}"
   echo "Downloading goreleaser from ${URL}"
-  if ! curl --location "${URL}" --output "${TMP_FILE}" &>/dev/null; then
+  if ! retry curl --fail --location "${URL}" --output "${TMP_FILE}" --connect-timeout 30 --max-time 600; then
     echo "Failed to download goreleaser"
     exit 1
   fi

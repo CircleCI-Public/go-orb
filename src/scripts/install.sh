@@ -1,9 +1,30 @@
 #!/usr/bin/env bash
 
+RETRY_ATTEMPTS=3
+RETRY_DELAY=5
+
+function retry {
+  local attempt=1
+  while [ "$attempt" -le "$RETRY_ATTEMPTS" ]; do
+    echo "Attempt $attempt of $RETRY_ATTEMPTS: $*" >&2
+    if "$@"; then
+      return 0
+    fi
+    echo "Attempt $attempt failed." >&2
+    attempt=$((attempt + 1))
+    if [ "$attempt" -le "$RETRY_ATTEMPTS" ]; then
+      echo "Retrying in ${RETRY_DELAY} seconds..." >&2
+      sleep "$RETRY_DELAY"
+    fi
+  done
+  echo "All $RETRY_ATTEMPTS attempts failed." >&2
+  return 1
+}
+
 function alpine_install {
   cd /opt || exit 200
   apk add bash gcc musl-dev go
-  wget "https://go.dev/dl/go${ORB_VAL_VERSION}.src.tar.gz"
+  retry wget --timeout=300 "https://go.dev/dl/go${ORB_VAL_VERSION}.src.tar.gz"
   tar xzf "go${ORB_VAL_VERSION}.src.tar.gz"
   mv go "go${ORB_VAL_VERSION}"
   cd "go${ORB_VAL_VERSION}/src" || exit 201
@@ -30,7 +51,7 @@ function standard_install {
   fi
 
   echo "Installing the requested version of Go."
-  curl -O --fail --location -sS "https://dl.google.com/go/go${ORB_VAL_VERSION}.${OSD_FAMILY}-${HOSTTYPE}.tar.gz"
+  retry curl -O --fail --location -sS --connect-timeout 30 --max-time 300 "https://dl.google.com/go/go${ORB_VAL_VERSION}.${OSD_FAMILY}-${HOSTTYPE}.tar.gz"
   $SUDO tar xzf "go${ORB_VAL_VERSION}.${OSD_FAMILY}-${HOSTTYPE}.tar.gz" -C /opt
   $SUDO rm "go${ORB_VAL_VERSION}.${OSD_FAMILY}-${HOSTTYPE}.tar.gz"
   $SUDO ln -sf /opt/go/bin/go /usr/local/bin/go
