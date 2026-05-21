@@ -14,6 +14,6 @@ parameters:
     default: '{{ checksum "go.sum" }}'
 steps:
   - save_cache:
-      key: v1-<< parameters.key >>-golangci-lint-{{ .Environment.CIRCLE_JOB }}-{{ arch }}-<< parameters.checksum >>-{{ epoch | round "72h" }}
+      key: v1-<< parameters.key >>-golangci-lint-{{ .Environment.CIRCLE_JOB }}-{{ arch }}-{{ .Environment.GOEXPERIMENT }}-<< parameters.checksum >>-{{ epoch | round "72h" }}
       paths:
         - << parameters.path >>

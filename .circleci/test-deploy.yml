@@ -213,6 +213,20 @@ jobs:
       - go/install:
           version: 1.16.4
       - run: go version && go build ./...
+  int-test-goexperiment-cache:
+    executor:
+      name: go/default
+      tag: "1.23"
+    environment:
+      GOEXPERIMENT: boringcrypto
+    steps:
+      - run:
+          name: "Check out sample project."
+          command: git clone https://github.com/CircleCI-Public/circleci-demo-go.git ~/project
+      - go/with-cache:
+          key: "goexperiment"
+          steps:
+            - run: go version && go build ./...
   go-test-default:
     executor:
       name: go/default
@@ -293,6 +307,8 @@ workflows:
           filters: *filters
       - int-test-vm-arm64:
           filters: *filters
+      - int-test-goexperiment-cache:
+          filters: *filters
       - go-test-default:
           filters: *filters
       - int-test-gotestsum-1-test:
@@ -323,5 +339,6 @@ workflows:
             - int-test-goreleaser-install-alpine-no-curl
             - int-test-goreleaser-install-pinned-version
             - int-test-goreleaser-release
+            - int-test-goexperiment-cache
           context: orb-publisher
           filters: *release-filters

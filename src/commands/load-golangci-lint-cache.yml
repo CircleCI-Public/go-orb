@@ -11,4 +11,4 @@ parameters:
 steps:
   - restore_cache:
       keys:
-        - v1-<< parameters.key >>-golangci-lint-{{ .Environment.CIRCLE_JOB }}-{{ arch }}-<< parameters.checksum >>-{{ epoch | round "72h" }}
+        - v1-<< parameters.key >>-golangci-lint-{{ .Environment.CIRCLE_JOB }}-{{ arch }}-{{ .Environment.GOEXPERIMENT }}-<< parameters.checksum >>-{{ epoch | round "72h" }}
