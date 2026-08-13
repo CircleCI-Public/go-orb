@@ -70,7 +70,7 @@ steps:
       steps:
         - save-mod-cache:
             key: '<< parameters.key >>'
-            checksum: '<< parameters.key >>'
+            checksum: '<< parameters.checksum >>'
             path: '<< parameters.mod-path >>'
   - when:
       condition: << parameters.golangci-lint >>
