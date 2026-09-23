@@ -221,6 +221,53 @@ jobs:
       - run:
           name: "Assert marker file was restored from cache"
           command: test -f ~/go/pkg/mod/marker.txt
+  # test to make sure two jobs sharing the same key/checksum don't share one
+  # mod cache entry: each job's with-cache mod cache must be scoped by job
+  # name, the same way the build and golangci-lint caches already are.
+  int-test-with-cache-mod-job-scope-a:
+    docker:
+      - image: cimg/base:stable
+    steps:
+      - run:
+          name: "Create checksum input"
+          command: echo "$CIRCLE_WORKFLOW_ID" > cache-checksum-input.txt
+      - go/with-cache:
+          mod: true
+          checksum: '{{ checksum "cache-checksum-input.txt" }}'
+          steps:
+            - run:
+                name: "Populate mod cache with job A's marker"
+                command: mkdir -p ~/go/pkg/mod && echo job-a > ~/go/pkg/mod/marker.txt
+      - run:
+          name: "Wipe mod cache dir to force a real restore"
+          command: rm -rf ~/go/pkg/mod
+      - go/load-mod-cache:
+          checksum: '{{ checksum "cache-checksum-input.txt" }}'
+      - run:
+          name: "Assert job A restored its own marker"
+          command: grep -qx job-a ~/go/pkg/mod/marker.txt
+  int-test-with-cache-mod-job-scope-b:
+    docker:
+      - image: cimg/base:stable
+    steps:
+      - run:
+          name: "Create checksum input"
+          command: echo "$CIRCLE_WORKFLOW_ID" > cache-checksum-input.txt
+      - go/with-cache:
+          mod: true
+          checksum: '{{ checksum "cache-checksum-input.txt" }}'
+          steps:
+            - run:
+                name: "Populate mod cache with job B's marker"
+                command: mkdir -p ~/go/pkg/mod && echo job-b > ~/go/pkg/mod/marker.txt
+      - run:
+          name: "Wipe mod cache dir to force a real restore"
+          command: rm -rf ~/go/pkg/mod
+      - go/load-mod-cache:
+          checksum: '{{ checksum "cache-checksum-input.txt" }}'
+      - run:
+          name: "Assert job B restored its own marker, not job A's"
+          command: grep -qx job-b ~/go/pkg/mod/marker.txt
   # test to make sure the dirty cache issue doesn't crop back up
   int-test-dirty-cache:
     executor: ubuntu_machine
@@ -317,6 +364,12 @@ workflows:
           filters: *filters
       - int-test-with-cache-mod-key-match:
           filters: *filters
+      - int-test-with-cache-mod-job-scope-a:
+          filters: *filters
+      - int-test-with-cache-mod-job-scope-b:
+          filters: *filters
+          requires:
+            - int-test-with-cache-mod-job-scope-a
       - int-test-dirty-cache:
           filters: *filters
       - int-test-vm-arm64:
@@ -345,6 +398,8 @@ workflows:
             - int-test-macos-executor
             - int-test-vm-linux
             - int-test-with-cache-mod-key-match
+            - int-test-with-cache-mod-job-scope-a
+            - int-test-with-cache-mod-job-scope-b
             - int-test-dirty-cache
             - int-test-vm-arm64
             - int-test-goreleaser-install
