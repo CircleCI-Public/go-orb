@@ -195,6 +195,32 @@ jobs:
           steps:
             - go/mod-download
             - run: go version && go build ./...
+  # test to make sure with-cache's save-mod-cache call uses the same checksum
+  # as load-mod-cache, so a save followed by a restore is a cache hit
+  int-test-with-cache-mod-key-match:
+    docker:
+      - image: cimg/base:stable
+    steps:
+      - run:
+          name: "Create checksum input"
+          command: echo "fixed-content" > cache-checksum-input.txt
+      - go/with-cache:
+          key: "mod-key-match-test"
+          mod: true
+          checksum: '{{ checksum "cache-checksum-input.txt" }}'
+          steps:
+            - run:
+                name: "Populate mod cache with marker file"
+                command: mkdir -p ~/go/pkg/mod && echo marker > ~/go/pkg/mod/marker.txt
+      - run:
+          name: "Wipe mod cache dir to force a real restore"
+          command: rm -rf ~/go/pkg/mod
+      - go/load-mod-cache:
+          key: "mod-key-match-test"
+          checksum: '{{ checksum "cache-checksum-input.txt" }}'
+      - run:
+          name: "Assert marker file was restored from cache"
+          command: test -f ~/go/pkg/mod/marker.txt
   # test to make sure the dirty cache issue doesn't crop back up
   int-test-dirty-cache:
     executor: ubuntu_machine
@@ -289,6 +315,8 @@ workflows:
           filters: *filters
       - int-test-vm-linux:
           filters: *filters
+      - int-test-with-cache-mod-key-match:
+          filters: *filters
       - int-test-dirty-cache:
           filters: *filters
       - int-test-vm-arm64:
@@ -316,6 +344,7 @@ workflows:
             - int-test-alpine
             - int-test-macos-executor
             - int-test-vm-linux
+            - int-test-with-cache-mod-key-match
             - int-test-dirty-cache
             - int-test-vm-arm64
             - int-test-goreleaser-install
