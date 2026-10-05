@@ -23,6 +23,7 @@ function retry {
 
 function alpine_install {
   cd /opt || exit 200
+  rm -rf go
   apk add bash gcc musl-dev go
   retry wget --timeout=300 "https://go.dev/dl/go${ORB_VAL_VERSION}.src.tar.gz"
   tar xzf "go${ORB_VAL_VERSION}.src.tar.gz"
@@ -36,29 +37,25 @@ function alpine_install {
 
 function standard_install {
   if command -v go >/dev/null; then
-    if go version | grep -q -F "go<< parameters.version >> "; then
-      echo "Binary already exists, skipping download."
-      exit 0
-    fi
-
-    echo "Found a different version of Go."
     OSD_FAMILY="$(go env GOHOSTOS)"
     HOSTTYPE="$(go env GOHOSTARCH)"
-
-    $SUDO rm -rf /usr/local/go
-    $SUDO install --owner="${USER}" -d /usr/local/go
-    $SUDO rm -rf /opt/go
   fi
 
-  echo "Installing the requested version of Go."
-  retry curl -O --fail --location -sS --connect-timeout 30 --max-time 300 "https://dl.google.com/go/go${ORB_VAL_VERSION}.${OSD_FAMILY}-${HOSTTYPE}.tar.gz"
-  $SUDO tar xzf "go${ORB_VAL_VERSION}.${OSD_FAMILY}-${HOSTTYPE}.tar.gz" -C /opt
-  $SUDO rm "go${ORB_VAL_VERSION}.${OSD_FAMILY}-${HOSTTYPE}.tar.gz"
+  $SUDO rm -rf /usr/local/go
+
+  if [ -x /opt/go/bin/go ] && /opt/go/bin/go version | grep -q -F "go${ORB_VAL_VERSION} "; then
+    echo "Go ${ORB_VAL_VERSION} already installed, skipping download."
+  else
+    $SUDO rm -rf /opt/go
+    echo "Installing the requested version of Go."
+    retry curl -O --fail --location -sS --connect-timeout 30 --max-time 300 "https://dl.google.com/go/go${ORB_VAL_VERSION}.${OSD_FAMILY}-${HOSTTYPE}.tar.gz"
+    $SUDO tar xzf "go${ORB_VAL_VERSION}.${OSD_FAMILY}-${HOSTTYPE}.tar.gz" -C /opt
+    $SUDO rm "go${ORB_VAL_VERSION}.${OSD_FAMILY}-${HOSTTYPE}.tar.gz"
+    $SUDO chown -R "$(whoami)": /opt/go
+  fi
+
   $SUDO ln -sf /opt/go/bin/go /usr/local/bin/go
   $SUDO ln -sf /opt/go/bin/gofmt /usr/local/bin/gofmt
-
-  #shellcheck disable=SC2016
-  $SUDO chown -R "$(whoami)": /usr/local/bin/go /usr/local/bin/gofmt
 }
 
 : "${OSD_FAMILY:="linux"}"
