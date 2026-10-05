@@ -11,4 +11,4 @@ parameters:
 steps:
   - restore_cache:
       keys:
-        - v1-<< parameters.key >>-go-mod-{{ arch }}-<< parameters.checksum >>
+        - v1-<< parameters.key >>-go-mod-{{ .Environment.CIRCLE_JOB }}-{{ arch }}-<< parameters.checksum >>

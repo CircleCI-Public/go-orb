@@ -14,6 +14,6 @@ parameters:
     default: '{{ checksum "go.sum" }}'
 steps:
   - save_cache:
-      key: v1-<< parameters.key >>-go-mod-{{ arch }}-<< parameters.checksum >>
+      key: v1-<< parameters.key >>-go-mod-{{ .Environment.CIRCLE_JOB }}-{{ arch }}-<< parameters.checksum >>
       paths:
         - << parameters.path >>
