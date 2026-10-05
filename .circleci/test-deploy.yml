@@ -281,7 +281,10 @@ jobs:
           command: go version | grep -F "go1.26.3 "
       - run:
           name: "Wipe Go install to force a real restore"
-          command: sudo rm -rf /opt/go
+          command: |
+            sudo rm -rf /opt/go
+            sudo mkdir -p /opt/go
+            sudo chown -R "$(whoami)": /opt/go
       - restore_cache:
           keys:
             - go-binary-int-test-<< pipeline.id >>-1.26.3-{{ arch }}
