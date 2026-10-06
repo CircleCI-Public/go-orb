@@ -13,7 +13,7 @@ parameters:
     description: |
       String to use in cache key. Typically overridden when needed to bust cache.
     type: string
-    default: "v2"
+    default: "v3"
 steps:
   - os-detect/init
   - when:
@@ -23,9 +23,9 @@ steps:
         - run:
             name: "Prep cache restore"
             command: |
-              $SUDO rm -rf /usr/local/go
-              $SUDO mkdir -p /usr/local/go
-              $SUDO chown -R $(whoami): /usr/local/go
+              $SUDO rm -rf /opt/go
+              $SUDO mkdir -p /opt/go
+              $SUDO chown -R $(whoami): /opt/go
         - restore_cache:
             keys:
               - go-binary-<<parameters.cache-key>>-<<parameters.version>>-{{ arch }}
@@ -44,4 +44,4 @@ steps:
         - save_cache:
             key: go-binary-<<parameters.cache-key>>-<<parameters.version>>-{{ arch }}
             paths:
-              - /usr/local/go
+              - /opt/go
