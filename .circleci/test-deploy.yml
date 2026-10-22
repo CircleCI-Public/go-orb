@@ -21,11 +21,11 @@ executors:
   go:
     resource_class: medium
     docker:
-      - image: cimg/go:1.23
+      - image: cimg/go:1.26.10
   go_arm:
     resource_class: arm.medium
     docker:
-      - image: cimg/go:1.23
+      - image: cimg/go:1.26.10
   mac:
     resource_class: m4pro.medium
     macos:
@@ -94,7 +94,7 @@ jobs:
   int-test-goreleaser-release:
     executor:
       name: go/default
-      tag: "1.23"
+      tag: "1.26.10"
     steps:
       - go/install-goreleaser
       - go/goreleaser-release:
@@ -105,7 +105,7 @@ jobs:
   int-test-cimg-go:
     executor:
       name: go/default
-      tag: "1.23"
+      tag: "1.26.10"
     steps:
       - run:
           name: "Check out sample project."
@@ -312,16 +312,16 @@ jobs:
   go-test-default:
     executor:
       name: go/default
-      tag: "1.23"
+      tag: "1.26.10"
     docker:
-      - image: cimg/go:1.23.3
+      - image: cimg/go:1.26.10
     steps:
       - checkout
       - go/test:
           project-path: tests
   int-test-gotestsum-1-test:
     docker:
-      - image: cimg/go:1.23.3
+      - image: cimg/go:1.26.10
     steps:
       - checkout
       - go/gotestsum:
@@ -332,7 +332,7 @@ jobs:
   int-test-gotestsum-2-test:
     executor:
       name: go/default
-      tag: "1.23"
+      tag: "1.26.10"
     steps:
       - checkout
       - go/gotestsum:
@@ -342,7 +342,7 @@ jobs:
           path: /home/circleci/project/tests
   int-test-gotestsum-all-test:
     docker:
-      - image: cimg/go:1.23.3
+      - image: cimg/go:1.26.10
     steps:
       - checkout
       - go/gotestsum:
