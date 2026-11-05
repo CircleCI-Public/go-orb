@@ -1,6 +1,8 @@
 version: 2.1
 
 description: |
+  Starting a new config? Use the `setup-go` Function instead: run `circleci function get setup-go`, or use `get_function` on the CircleCI MCP server. This orb is still maintained for existing pipelines.
+
   Common CircleCI tasks for the Go ( Golang ) programming language.
 
 display:
