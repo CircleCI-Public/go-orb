@@ -4,6 +4,8 @@ A Go Orb for CircleCI.
 This orb allows you to do common Go related tasks on CircleCI such as install Go, downloading modules, caching, etc.
 
 
+> **Starting a new config?** Use the [`setup-go` Function](https://github.com/circleci-functions/setup-go#readme) instead. See the [Functions overview](https://circleci.com/docs/functions/functions-intro/) and the [Functions catalog](https://circleci.com/docs/functions/functions-catalog/). This orb is still maintained for existing pipelines.
+
 ## Usage
 
 Example usage as well as a list of available executors, commands, and jobs are available on this orb's [registry page][reg-page].
